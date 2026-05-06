@@ -10,8 +10,10 @@ public class Player : MonoBehaviour
 {
     private Transform _transform;
     private CharacterController _controller;
-    
     private IPlayer[] _playerScripts;
+
+    public int score = 0;
+    public void AddScore(int amount) => score += amount;
 
     private void Start()
     {
