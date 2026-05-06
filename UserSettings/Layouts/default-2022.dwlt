@@ -118,7 +118,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 64
+  controlID: 108
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -143,7 +143,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 65
+  controlID: 109
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -168,7 +168,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 66
+  controlID: 40
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -213,8 +213,8 @@ MonoBehaviour:
     y: 0
     width: 404
     height: 479.2
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 201, y: 221}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 14}
   m_Panes:
   - {fileID: 14}
@@ -299,8 +299,8 @@ MonoBehaviour:
     y: 0
     width: 348
     height: 826.8
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 276, y: 71}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 24}
   m_Panes:
   - {fileID: 24}
@@ -714,7 +714,7 @@ MonoBehaviour:
       snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 0
       id: UnityEditor.SceneViewCameraOverlay
-      index: 11
+      index: 9
       layout: 4
       size: {x: 0, y: 0}
       sizeOverriden: 0
@@ -759,7 +759,7 @@ MonoBehaviour:
       sizeOverriden: 0
     m_OverlaysVisible: 1
   m_WindowGUID: cc27987af1a868c49b0894db9c0f5429
-  m_Gizmos: 0
+  m_Gizmos: 1
   m_OverrideSceneCullingMask: 6917529027641081856
   m_SceneIsLit: 1
   m_SceneLighting: 1
@@ -768,9 +768,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -4.4356613, y: 11.432706, z: 2.6402006}
+    m_Target: {x: -12.117888, y: -1.7688121, z: 3.3457227}
     speed: 2
-    m_Value: {x: -4.4356613, y: 11.432706, z: 2.6402006}
+    m_Value: {x: -12.117888, y: -1.7688121, z: 3.3457227}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -816,9 +816,9 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.03188405, y: 0.86593336, z: 0.055661034, w: -0.49602938}
+    m_Target: {x: -0.076794475, y: 0.58214456, z: -0.055358883, w: -0.80755633}
     speed: 2
-    m_Value: {x: 0.031139966, y: 0.86601573, z: 0.05436206, w: -0.49607652}
+    m_Value: {x: -0.07679442, y: 0.58214414, z: -0.055358842, w: -0.80755574}
   m_Size:
     m_Target: 10
     speed: 2
@@ -885,9 +885,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 8c710000
+      m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 9ee1ffff
+      m_ExpandedIDs: 54e8ffff82e9ffff2afbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1278,7 +1278,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scenes
+    - Assets/Scripts/Player/Gravity
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -1286,16 +1286,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 48
   m_LastFolders:
-  - Assets/Scenes
+  - Assets/Scripts/Player/Gravity
   m_LastFoldersGridSize: 48
   m_LastProjectPath: A:\Unity\Unity_Projects\Bucuria - Sweet Delivery
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 88710000
-    m_LastClickedID: 29064
-    m_ExpandedIDs: 0000000010700000
+    m_SelectedIDs: 0e710000
+    m_LastClickedID: 28942
+    m_ExpandedIDs: 00000000d46b0000526d0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1323,7 +1323,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000010700000
+    m_ExpandedIDs: 00000000d46b0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1350,7 +1350,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 1
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c6230000927f0000d4860000547f0000b8ce0000ca8500004aa900005aaa00003aa80000dad00000467f0000ee830000ca7f0000f681000006830000e6800000168400003e7f00000e900000da860000de860000e48c00006a8c0100cc870000dc88000062b10000f0860000d48b0000d28b0000dc8b0000d68b000098310100d87900006299c400a20c080100000000cae4000052e60000fe160100fce002000ee2020072fb020084fc0200a4fe0200b4ff020068320300c22b040094a200001ca40100b4e20000aee20000bae20000dae50000a2850000f6a20000a6d80000c6da0000b6d90000baa7000016b50200d4080300e409030036d2020072e60100a6bd0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -1451,7 +1451,7 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 30358
+  m_LastSelectedObjectID: -6468
 --- !u!114 &22
 MonoBehaviour:
   m_ObjectHideFlags: 52
