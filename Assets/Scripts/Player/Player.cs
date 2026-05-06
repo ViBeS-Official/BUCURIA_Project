@@ -13,7 +13,11 @@ public class Player : MonoBehaviour
     private IPlayer[] _playerScripts;
 
     public int score = 0;
-    public void AddScore(int amount) => score += amount;
+    public void AddScore(int amount)
+    {
+        score += amount;
+        UIManager.Instance?.UpdateScore(score);
+    }
 
     private void Start()
     {
