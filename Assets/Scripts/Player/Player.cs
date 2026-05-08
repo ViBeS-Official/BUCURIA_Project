@@ -12,14 +12,7 @@ public class Player : MonoBehaviour
     private CharacterController _controller;
     private IPlayer[] _playerScripts;
 
-    public int score = 0;
-    public void AddScore(int amount)
-    {
-        score += amount;
-        UIManager.Instance?.UpdateScore(score);
-    }
-
-    private void Start()
+    private void Awake()
     {
         _transform = GetComponent<Transform>();
         _controller = GetComponent<CharacterController>();
@@ -27,11 +20,18 @@ public class Player : MonoBehaviour
         for (int i = 0; i < _playerScripts.Length; i++) _playerScripts[i].Initialize(this);
     }
 
+    public void SetPosition(Vector3 pos)
+    {
+        _controller.enabled = false;
+        _transform.position = pos;
+        _controller.enabled = true;
+    }
+
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if (hit.collider.CompareTag("Obstacle"))
         {
-            GameManager.Instance.GameOver();
+            GameManager.Instance?.GameOver();
         }
     }
 

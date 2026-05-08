@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
 
     private void Update()
     {
-        if (!_player) return;
+        if (!_player || GameManager.Instance.gameOver) return;
         if (_canSmooth) _horizontalInput = Input.GetAxis("Horizontal");
         else _horizontalInput = Mathf.Lerp(_horizontalInput, Input.GetAxis("Horizontal"), _smoothSpeed * Time.deltaTime);
         Vector3 move = Vector3.forward * _forwardSpeed;

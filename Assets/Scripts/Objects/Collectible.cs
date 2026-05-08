@@ -8,8 +8,7 @@ public class Collectible : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Player player = other.GetComponent<Player>();
-            if (player) player.AddScore(value);
+            UIManager.Instance?.AddScore(value);
             Destroy(gameObject);
         }
     }
