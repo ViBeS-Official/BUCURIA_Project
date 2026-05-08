@@ -27,6 +27,14 @@ public class Player : MonoBehaviour
         for (int i = 0; i < _playerScripts.Length; i++) _playerScripts[i].Initialize(this);
     }
 
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.collider.CompareTag("Obstacle"))
+        {
+            GameManager.Instance.GameOver();
+        }
+    }
+
     public Transform GetPlayerTransform => _transform;
     public CharacterController GetPlayerController => _controller;
 }
