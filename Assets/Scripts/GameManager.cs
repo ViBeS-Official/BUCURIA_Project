@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -6,6 +7,7 @@ public class GameManager : MonoBehaviour
     public Player player;
 
     public bool gameOver;
+    public event Action OnRestart;
 
     private void Awake() => Instance = this;
 
@@ -16,6 +18,7 @@ public class GameManager : MonoBehaviour
         gameOver = false;
         UIManager.Instance?.GameStart();
         if (player) player.SetPosition(Vector3.zero);
+        OnRestart?.Invoke();
     }
 
     public void GameOver()
