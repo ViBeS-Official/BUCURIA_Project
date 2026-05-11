@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CandySpawner : MonoBehaviour
+public class ObstacleSpawner : MonoBehaviour
 {
     [Header("References")]
-    public GameObject candyPrefab;
+    public GameObject obstaclePrefab;
     public Transform player;
 
     [Header("Spawn Settings")]
-    public int candiesCount = 10;
+    public int obstaclesCount = 10;
     public float distanceBetween = 5f;
 
     [Range(0, 3)]
@@ -20,7 +20,7 @@ public class CandySpawner : MonoBehaviour
     [Header("Lanes")]
     public float[] lanesX = { -2.5f, 0f, 2.5f };
 
-    private List<GameObject> spawnedCandies = new();
+    private readonly List<GameObject> spawnedObstacles = new();
 
     private float lastSpawnZ;
 
@@ -31,29 +31,28 @@ public class CandySpawner : MonoBehaviour
 
     private void Update()
     {
-        HandleCandies();
+        HandleObstacles();
     }
 
-    private void GenerateStartCandies()
+    private void GenerateStartObstacles()
     {
-        for (int i = 0; i < candiesCount; i++) TrySpawnCandyWave();
+        for (int i = 0; i < obstaclesCount; i++) TrySpawnObstacleWave();
     }
 
-    private void HandleCandies()
+    private void HandleObstacles()
     {
-        spawnedCandies.RemoveAll(c => c == null);
-        while (spawnedCandies.Count < candiesCount) TrySpawnCandyWave();
-        if (spawnedCandies.Count == 0) return;
-        GameObject firstCandy = spawnedCandies[0];
-        if (player.position.z - firstCandy.transform.position.z > 10f)
+        spawnedObstacles.RemoveAll(o => o == null);
+        while (spawnedObstacles.Count < obstaclesCount) TrySpawnObstacleWave();
+        if (spawnedObstacles.Count == 0) return;
+        GameObject firstObstacle = spawnedObstacles[0];
+        if (player.position.z - firstObstacle.transform.position.z > 15f)
         {
-            spawnedCandies.RemoveAt(0);
-            Destroy(firstCandy);
-            TrySpawnCandyWave();
+            spawnedObstacles.RemoveAt(0);
+            Destroy(firstObstacle);
         }
     }
 
-    private void TrySpawnCandyWave()
+    private void TrySpawnObstacleWave()
     {
         lastSpawnZ += distanceBetween;
         int obstaclesToSpawn = Random.Range(minObstaclesPerWave, maxObstaclesPerWave + 1);
@@ -77,17 +76,17 @@ public class CandySpawner : MonoBehaviour
                 }
             }
             if (blocked) continue;
-            GameObject candy = Instantiate(candyPrefab, spawnPosition, Quaternion.identity, transform);
-            spawnedCandies.Add(candy);
+            GameObject obstacle = Instantiate(obstaclePrefab, spawnPosition, Quaternion.identity, transform);
+            spawnedObstacles.Add(obstacle);
             spawnedCount++;
         }
     }
 
     private void RestartSpawner()
     {
-        foreach (GameObject obj in spawnedCandies) Destroy(obj);
-        spawnedCandies.Clear();
+        foreach (GameObject obj in spawnedObstacles) Destroy(obj);
+        spawnedObstacles.Clear();
         lastSpawnZ = Mathf.Floor(player.position.z / distanceBetween) * distanceBetween;
-        GenerateStartCandies();
+        GenerateStartObstacles();
     }
 }
