@@ -173,6 +173,7 @@ public class RunnerWorldGenerator : MonoBehaviour
     {
         Vector3 spawnPosition = new(_lanesX[lane], _spawnY, z);
         GameObject spawned = Instantiate(spawnObject.prefab, spawnPosition, Quaternion.identity, transform);
+        spawned.GetComponent<MeshGenerator>().Generate(_seedHash);
         spawnObject.spawnedObjects.Add(spawned);
     }
     private void Shuffle(List<int> list)
