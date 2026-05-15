@@ -23,9 +23,6 @@ public class RunnerWorldGenerator : MonoBehaviour
     private System.Random _random;
     private int _seedHash;
 
-    [Header("References")]
-    public Transform _player;
-
     [Header("Objects")]
     public SpawnObject[] _objects;
 
@@ -86,6 +83,7 @@ public class RunnerWorldGenerator : MonoBehaviour
 
     private void RestartGenerator()
     {
+        if (!GameManager.Instance || GameManager.Instance.GetPlayer == null) return;
         InitializeSeed();
         foreach (SpawnObject obj in _objects)
         {
@@ -96,13 +94,14 @@ public class RunnerWorldGenerator : MonoBehaviour
 
         _currentDistanceBetween = _startDistanceBetween;
         _currentBlockedObjectsPerWave = _startBlockedObjectsPerWave;
-        _lastSpawnZ = Mathf.Floor(_player.position.z);
+        _lastSpawnZ = Mathf.Floor(GameManager.Instance.GetPlayer.GetPlayerTransform.position.z);
         for (int i = 0; i < _generateAheadRows; i++) GenerateWave();
     }
 
     private void UpdateDifficulty()
     {
-        float distanceTravelled = _player.position.z;
+        if (!GameManager.Instance || GameManager.Instance.GetPlayer == null) return;
+        float distanceTravelled = GameManager.Instance.GetPlayer.GetPlayerTransform.position.z;
         int difficultyLevel = Mathf.FloorToInt(distanceTravelled / _difficultyDistanceStep);
         _currentDistanceBetween = Mathf.Max(_minDistanceBetween, _startDistanceBetween - (difficultyLevel * _distanceDifficultyMultiplier));
         _currentBlockedObjectsPerWave = Mathf.Clamp(_startBlockedObjectsPerWave + difficultyLevel, 1, _absoluteMaxBlockedObjectsPerWave);
@@ -110,7 +109,8 @@ public class RunnerWorldGenerator : MonoBehaviour
 
     private void GenerateAhead()
     {
-        while (_lastSpawnZ < _player.position.z + (_generateAheadRows * _currentDistanceBetween)) GenerateWave();
+        if (!GameManager.Instance || GameManager.Instance.GetPlayer == null) return;
+        while (_lastSpawnZ < GameManager.Instance.GetPlayer.GetPlayerTransform.position.z + (_generateAheadRows * _currentDistanceBetween)) GenerateWave();
     }
 
     private void GenerateWave()
@@ -186,6 +186,7 @@ public class RunnerWorldGenerator : MonoBehaviour
 
     private void CleanupObjects()
     {
+        if (!GameManager.Instance || GameManager.Instance.GetPlayer == null) return;
         foreach (SpawnObject spawnObject in _objects)
         {
             for (int i = spawnObject.spawnedObjects.Count - 1; i >= 0; i--)
@@ -196,7 +197,7 @@ public class RunnerWorldGenerator : MonoBehaviour
                     spawnObject.spawnedObjects.RemoveAt(i);
                     continue;
                 }
-                if (_player.position.z - obj.transform.position.z > _destroyBehindDistance)
+                if (GameManager.Instance.GetPlayer.GetPlayerTransform.position.z - obj.transform.position.z > _destroyBehindDistance)
                 {
                     Destroy(obj);
                     spawnObject.spawnedObjects.RemoveAt(i);

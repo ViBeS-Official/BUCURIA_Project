@@ -27,4 +27,6 @@ public class GameManager : MonoBehaviour
         gameOver = true;
         UIManager.Instance?.GameOver();
     }
+
+    public Player GetPlayer => player;
 }

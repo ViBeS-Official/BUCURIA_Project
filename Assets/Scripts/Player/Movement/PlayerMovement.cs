@@ -42,7 +42,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
     private void HandleDifficulty()
     {
         float distanceTravelled = transform.position.z;
-        float difficultyLevel = Mathf.FloorToInt(distanceTravelled / _difficultyDistanceStep);
+        float difficultyLevel = distanceTravelled / _difficultyDistanceStep;
         float difficultyMultiplier = 1f + (difficultyLevel * _distanceDifficultyMultiplier);
         _currentForwardSpeed = Mathf.Min(_forwardSpeed * difficultyMultiplier, _maxForwardSpeed);
         _currentSideSpeed = Mathf.Min(_sideSpeed * difficultyMultiplier, _maxSideSpeed);
