@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1296387270870020287}
-  - component: {fileID: 4420288538089175950}
-  - component: {fileID: 685148597282563267}
   - component: {fileID: 1940775612948289723}
   - component: {fileID: 4468843432562178579}
   - component: {fileID: -7022516748370043053}
@@ -30,62 +28,12 @@ Transform:
   m_GameObject: {fileID: 7920835800225120388}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.25, z: 6}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4420288538089175950
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7920835800225120388}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &685148597282563267
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7920835800225120388}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 616b2cb39f54e1a47be1d3a6f385fae8, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &1940775612948289723
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -120,6 +68,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   value: 1
+  rotationSpeed: 30
+  floatSpeed: 1
+  floatHeight: 0.25
 --- !u!114 &-7022516748370043053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,5 +83,106 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27d68ddaaa0a330468c946fd5dc9de2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _variants: []
+  _variants:
+  - name: CaramelRed
+    prefab: {fileID: 8354630494123757751, guid: 3d5567694bf69cc47905d7fbc85abf97,
+      type: 3}
+    weight: 100
+  - name: CaramelGreen
+    prefab: {fileID: 8296927811696911991, guid: f05c9bd5d710f1f489f7fb2695d09b74,
+      type: 3}
+    weight: 100
+  - name: CaramelBlue
+    prefab: {fileID: 1939100291905426736, guid: 7a115f45e970f8342bcf5ef032f0ea0c,
+      type: 3}
+    weight: 100
+  - name: CaramelYellow
+    prefab: {fileID: 5349873961388185386, guid: df854834b809c2f49a778d6e7c61417c,
+      type: 3}
+    weight: 100
+  - name: CaramelPink
+    prefab: {fileID: 3762921386052921973, guid: 794e391314cb3de44a4d62f0d2a2f4d6,
+      type: 3}
+    weight: 100
+  - name: CaramelCyan
+    prefab: {fileID: 4169600599117833775, guid: 2ec9a4e6321c2ae40ad41834589afb25,
+      type: 3}
+    weight: 100
+  - name: Baton
+    prefab: {fileID: 4747006669305891528, guid: 15933d05b4a2de74da90d3556df7fecd,
+      type: 3}
+    weight: 1
+  - name: Brandusa
+    prefab: {fileID: 5116246605156277390, guid: a93e8104c738b984c9e686ae062f408c,
+      type: 3}
+    weight: 1
+  - name: Bucurel
+    prefab: {fileID: 2113186093791044625, guid: a976e4c656aa1084488af5edad64d76c,
+      type: 3}
+    weight: 1
+  - name: Cafea Crema
+    prefab: {fileID: 686388818236116536, guid: 71b4d98c96152ed4991d39f60ea915de, type: 3}
+    weight: 1
+  - name: Cheita De Aur
+    prefab: {fileID: 7573364080288654380, guid: 1e3ee37e06de090419dcad89313cd43d,
+      type: 3}
+    weight: 1
+  - name: Chisinau De Seara
+    prefab: {fileID: 4523143785351444482, guid: 7e04ee96a5631114982d095480ba8407,
+      type: 3}
+    weight: 1
+  - name: Classic
+    prefab: {fileID: 752505179914966739, guid: 7d95c8dccf601d14f99ef5999d70df69, type: 3}
+    weight: 1
+  - name: Clepsidra
+    prefab: {fileID: 3148050167309031542, guid: 2f8fb5684f05e5c42a06799fbb269516,
+      type: 3}
+    weight: 1
+  - name: Cometa
+    prefab: {fileID: 2338165984216237403, guid: d669edf1ca039dc49b904e3124369952,
+      type: 3}
+    weight: 1
+  - name: Do Re Mi
+    prefab: {fileID: 6902544561790259440, guid: 6a548dddb4bbc1546814f1feb66f1624,
+      type: 3}
+    weight: 1
+  - name: Favorit
+    prefab: {fileID: 3136956938250496003, guid: a2216d1a44e1b3448aba629eb21a705f,
+      type: 3}
+    weight: 1
+  - name: Folclor
+    prefab: {fileID: 220050661607650602, guid: cf493e164795d1246a5f143145b7eb95, type: 3}
+    weight: 1
+  - name: Frutic
+    prefab: {fileID: 6562690489773952960, guid: 5ceee37f4dd9b674c808e8ee9bc681b9,
+      type: 3}
+    weight: 1
+  - name: Griliaj
+    prefab: {fileID: 1968052426463393101, guid: cd73d73540d302e468ab56badca50b53,
+      type: 3}
+    weight: 1
+  - name: Lamaita
+    prefab: {fileID: 2276722567386920720, guid: d99ed7d06499dfc4e9c3824a8d853c4a,
+      type: 3}
+    weight: 1
+  - name: Masca
+    prefab: {fileID: 5695456999869583939, guid: 4440b97d4ceec9644ac27ed06571d663,
+      type: 3}
+    weight: 1
+  - name: Meteorit
+    prefab: {fileID: 1642733660990350802, guid: 838d3257f8c14154f91eea1f739c15c8,
+      type: 3}
+    weight: 1
+  - name: Moldova
+    prefab: {fileID: 5921799520924936843, guid: 2e3b2522e0d1b6243a4f2fe3cc5f5f1d,
+      type: 3}
+    weight: 1
+  - name: Pasarea Maiastra
+    prefab: {fileID: 6187357616645354683, guid: 66e6d5e0c43b2d1418a2e8a085ab62b0,
+      type: 3}
+    weight: 1
+  - name: Racusori
+    prefab: {fileID: 1082264773239157233, guid: 23f968a88218c9045a70e5fa559c19f8,
+      type: 3}
+    weight: 1
   _mesh: {fileID: 0}

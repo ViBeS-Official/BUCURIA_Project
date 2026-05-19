@@ -20,14 +20,13 @@ public class RunnerWorldGenerator : MonoBehaviour
         [HideInInspector] public readonly List<GameObject> spawnedObjects = new();
     }
 
-    private System.Random _random;
-    private int _seedHash;
-
     [Header("Objects")]
     public SpawnObject[] _objects;
 
     [Header("Seed")]
     [Tooltip("Если пусто — создаётся автоматически")] public string _seed;
+    private System.Random _random;
+    private int _seedHash;
 
     [Header("Lanes")]
     public float[] _lanesX = { -2.5f, 0f, 2.5f };
@@ -78,7 +77,6 @@ public class RunnerWorldGenerator : MonoBehaviour
         if (string.IsNullOrWhiteSpace(_seed)) _seed = Guid.NewGuid().ToString();
         _seedHash = _seed.GetHashCode();
         _random = new System.Random(_seedHash);
-        Debug.Log($"Seed: {_seed}");
     }
 
     private void RestartGenerator()
@@ -173,7 +171,7 @@ public class RunnerWorldGenerator : MonoBehaviour
     {
         Vector3 spawnPosition = new(_lanesX[lane], _spawnY, z);
         GameObject spawned = Instantiate(spawnObject.prefab, spawnPosition, Quaternion.identity, transform);
-        spawned.GetComponent<MeshGenerator>().Generate(_seedHash);
+        spawned.GetComponent<MeshGenerator>().Generate(_random.Next());
         spawnObject.spawnedObjects.Add(spawned);
     }
     private void Shuffle(List<int> list)
