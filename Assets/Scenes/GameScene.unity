@@ -1788,19 +1788,20 @@ MonoBehaviour:
     isFrequent: 0
     spawnChance: 1
     maxPerWave: 2
+    spawnY: 2
   - name: Candies
     prefab: {fileID: 7920835800225120388, guid: fff13e4403b236c489675a00e9edbbe3,
       type: 3}
     isPassable: 1
     isFrequent: 1
-    spawnChance: 0.2
+    spawnChance: 0.1
     maxPerWave: 3
+    spawnY: 0.5
   _seed: 0
   _lanesX:
   - -2.5
   - 0
   - 2.5
-  _spawnY: 0.5
   _minGridDistance: 2.5
   _startDistanceBetween: 15
   _minDistanceBetween: 5
@@ -1808,8 +1809,8 @@ MonoBehaviour:
   _difficultyDistanceStep: 50
   _startBlockedObjectsPerWave: 1
   _absoluteMaxBlockedObjectsPerWave: 2
-  _destroyBehindDistance: 20
-  _generateAheadRows: 20
+  _destroyBehindDistance: 10
+  _generateAheadRows: 5
 --- !u!1 &1835017257
 GameObject:
   m_ObjectHideFlags: 0

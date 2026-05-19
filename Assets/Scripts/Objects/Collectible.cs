@@ -4,15 +4,15 @@ public class Collectible : MonoBehaviour
 {
     [Header("Score")]
     public int value = 1;
-    
+
     [Header("Rotation")]
-    [SerializeField] private float rotationSpeed = 90f;
+    [SerializeField] private float _rotationSpeed = 30f;
 
     [Header("Floating")]
-    [SerializeField] private float floatSpeed = 2f;
-    [SerializeField] private float floatHeight = 0.25f;
+    [SerializeField] private float _floatSpeed = 1f;
+    [SerializeField] private float _floatHeight = 0.25f;
 
-    private Vector3 startPosition;
+    private Vector3 _startPosition;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -25,7 +25,7 @@ public class Collectible : MonoBehaviour
 
     private void Start()
     {
-        startPosition = transform.position;
+        _startPosition = transform.position;
     }
 
     private void Update()
@@ -36,13 +36,13 @@ public class Collectible : MonoBehaviour
 
     private void Rotate()
     {
-        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.World);
+        transform.Rotate(Vector3.up, _rotationSpeed * Time.deltaTime, Space.World);
     }
 
     private void Float()
     {
-        float yOffset = Mathf.Sin(Time.time * floatSpeed) * floatHeight;
-        Vector3 newPosition = startPosition;
+        float yOffset = Mathf.Sin(Time.time * _floatSpeed) * _floatHeight;
+        Vector3 newPosition = _startPosition;
         newPosition.y += yOffset;
         transform.position = newPosition;
     }

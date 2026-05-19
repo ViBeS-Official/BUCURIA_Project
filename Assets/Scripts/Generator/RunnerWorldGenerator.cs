@@ -17,6 +17,7 @@ public class RunnerWorldGenerator : MonoBehaviour
         [Header("Settings")]
         [Range(0f, 1f)] public float spawnChance = 1f;
         [Min(0)] public int maxPerWave = 1;
+        public float spawnY = 1f;
         [HideInInspector] public readonly List<GameObject> spawnedObjects = new();
     }
 
@@ -30,8 +31,6 @@ public class RunnerWorldGenerator : MonoBehaviour
 
     [Header("Lanes")]
     public float[] _lanesX = { -2.5f, 0f, 2.5f };
-    [Header("Spawn Height")]
-    public float _spawnY = 1f;
 
     [Header("Distance")]
     [Tooltip("Минимальный GRID шаг")] public float _minGridDistance = 2.5f;
@@ -169,7 +168,7 @@ public class RunnerWorldGenerator : MonoBehaviour
     }
     private void Spawn(SpawnObject spawnObject, int lane, float z)
     {
-        Vector3 spawnPosition = new(_lanesX[lane], _spawnY, z);
+        Vector3 spawnPosition = new(_lanesX[lane], spawnObject.spawnY, z);
         GameObject spawned = Instantiate(spawnObject.prefab, spawnPosition, Quaternion.identity, transform);
         spawned.GetComponent<MeshGenerator>().Generate(_random.Next());
         spawnObject.spawnedObjects.Add(spawned);
