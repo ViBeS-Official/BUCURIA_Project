@@ -29,6 +29,8 @@ public class PlayerMovement : MonoBehaviour, IPlayer
     [Header("Smooth")]
     public bool _canSmooth = true;
     public float _smoothSpeed = 5;
+    [SerializeField] private float _rotationAngle = 25f;
+    [SerializeField] private float _rotationSmooth = 10f;
 
     private float _horizontalInput;
 
@@ -43,10 +45,11 @@ public class PlayerMovement : MonoBehaviour, IPlayer
 
     private void Update()
     {
-        if (!_player || GameManager.Instance.gameOver) return;
+        if (!_player) return;
         HandleDifficulty();
         HandleInput();
         HandleMovement();
+        HandleVisualRotation();
     }
 
     private void HandleDifficulty()
@@ -60,6 +63,11 @@ public class PlayerMovement : MonoBehaviour, IPlayer
 
     private void HandleInput()
     {
+        if (GameManager.Instance.gameOver)
+        {
+            _horizontalInput = 0f;
+            return;
+        }
         if (_canSmooth) _horizontalInput = Mathf.Lerp(_horizontalInput, Input.GetAxis("Horizontal"), _smoothSpeed * Time.deltaTime);
         else _horizontalInput = Input.GetAxis("Horizontal");
         if (Input.GetKeyDown(KeyCode.S)) StartSlide();
@@ -68,20 +76,37 @@ public class PlayerMovement : MonoBehaviour, IPlayer
     {
         Vector3 move = Vector3.forward * _currentForwardSpeed;
         move += Vector3.right * _horizontalInput * _currentSideSpeed;
+        if (GameManager.Instance.gameOver)
+        {
+            move.x = 0f;
+            move.z = 0f;
+        }
         move += _gravity.GetVelocity();
         _player.GetPlayerController.Move(move * Time.deltaTime);
+    }
+    private void HandleVisualRotation()
+    {
+        float targetYRotation = _horizontalInput * _rotationAngle;
+        Quaternion targetRotation = Quaternion.Euler(0, targetYRotation, 0);
+        _player.GetMeshTransform.localRotation = Quaternion.Lerp(_player.GetMeshTransform.localRotation, targetRotation, _rotationSmooth * Time.deltaTime);
     }
 
     private void StartSlide()
     {
-        if (_isSliding) return;
-        _isSliding = true;
-        _player.GetPlayerController.height = _slideHeight;
-        Invoke(nameof(StopSlide), _slideTime);
+        if (!GameManager.Instance.gameOver && !_isSliding && !_gravity.IsJumping)
+        {
+            _isSliding = true;
+            _player.GetPlayerController.center = _slideCenter;
+            _player.GetPlayerController.height = _slideHeight;
+            _player.GetAnimator.SetTrigger("Slide");
+            Invoke(nameof(StopSlide), _slideTime);
+        }
     }
     private void StopSlide()
     {
+        _player.GetPlayerController.center = _normalCenter;
         _player.GetPlayerController.height = _normalHeight;
         _isSliding = false;
     }
+    public bool IsSlide => _isSliding;
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerGravity : MonoBehaviour, IPlayer
 {
     private Player _player;
+    private PlayerMovement _movement;
 
     [Header("Gravity / Jump")]
     public float _gravity = -10f;
@@ -10,11 +11,15 @@ public class PlayerGravity : MonoBehaviour, IPlayer
 
     private Vector3 _velocity;
 
-    public void Initialize(Player player) => _player = player;
+    public void Initialize(Player player)
+    {
+        _player = player;
+        _movement = _player.GetComponentInChildren<PlayerMovement>();
+    }
 
     private void Update()
     {
-        if (!_player || GameManager.Instance.gameOver) return;
+        if (!_player) return;
         HandleInput();
         HandleMovement();
     }
@@ -30,8 +35,13 @@ public class PlayerGravity : MonoBehaviour, IPlayer
 
     private void Jump()
     {
-        if (_player.GetPlayerController.isGrounded) _velocity.y = _jumpForce;
+        if (!GameManager.Instance.gameOver && _player.GetPlayerController.isGrounded && !_movement.IsSlide)
+        {
+            _velocity.y = _jumpForce;
+            _player.GetAnimator.SetTrigger("Jump");
+        }
     }
 
     public Vector3 GetVelocity() => _velocity;
+    public bool IsJumping => !_player.GetPlayerController.isGrounded;
 }
