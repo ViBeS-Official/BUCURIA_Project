@@ -29,10 +29,7 @@ public class Player : MonoBehaviour
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (hit.collider.CompareTag("Obstacle"))
-        {
-            GameManager.Instance?.GameOver();
-        }
+        if (hit.collider.CompareTag("Obstacle")) GameManager.Instance?.GameOver();
     }
 
     public Transform GetPlayerTransform => _transform;
