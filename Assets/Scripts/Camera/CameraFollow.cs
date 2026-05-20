@@ -2,16 +2,25 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
+    private PlayerMovement _movement;
+
     [Header("Settings")]
-    public Vector3 offset = new Vector3(0, 4, -8);
-    public float smoothSpeed = 5f;
+    public Vector3 _normalOffset = new(0, 2, -2);
+    public Vector3 _slideOffset = new(0, 1, -2);
+    public float _smoothSpeed = 5f;
+    public Transform _targetFollow;
+
+    void Start()
+    {
+        _movement = GameManager.Instance.GetPlayer.GetComponentInChildren<PlayerMovement>();
+    }
 
     void LateUpdate()
     {
         if (GameManager.Instance && GameManager.Instance.GetPlayer == null) return;
-        Vector3 desiredPosition = GameManager.Instance.GetPlayer.GetPlayerTransform.position + offset;
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+        Vector3 desiredPosition = GameManager.Instance.GetPlayer.GetPlayerTransform.position + (_movement && _movement.IsSlide ? _slideOffset : _normalOffset);
+        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, _smoothSpeed * Time.deltaTime);
         transform.position = smoothedPosition;
-        transform.LookAt(GameManager.Instance.GetPlayer.GetPlayerTransform);
+        transform.LookAt(_targetFollow);
     }
 }

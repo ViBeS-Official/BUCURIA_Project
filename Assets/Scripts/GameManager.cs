@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     public Player player;
 
-    public bool gameOver;
+    public bool _gameOver;
     public event Action OnRestart;
 
     private void Awake() => Instance = this;
@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
 
     public void GameStart()
     {
-        gameOver = false;
+        _gameOver = false;
         player.GetAnimator.SetBool("IsRun", true);
         player.GetAnimator.SetTrigger("GameStart");
         UIManager.Instance?.GameStart();
@@ -25,8 +25,8 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        if (gameOver) return;
-        gameOver = true;
+        if (_gameOver) return;
+        _gameOver = true;
         player.GetAnimator.SetTrigger("GameOver");
         UIManager.Instance?.GameOver();
     }

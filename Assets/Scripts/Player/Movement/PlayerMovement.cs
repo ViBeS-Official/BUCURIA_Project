@@ -63,7 +63,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
 
     private void HandleInput()
     {
-        if (GameManager.Instance.gameOver)
+        if (GameManager.Instance._gameOver)
         {
             _horizontalInput = 0f;
             return;
@@ -76,7 +76,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
     {
         Vector3 move = Vector3.forward * _currentForwardSpeed;
         move += Vector3.right * _horizontalInput * _currentSideSpeed;
-        if (GameManager.Instance.gameOver)
+        if (GameManager.Instance._gameOver)
         {
             move.x = 0f;
             move.z = 0f;
@@ -93,7 +93,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
 
     private void StartSlide()
     {
-        if (!GameManager.Instance.gameOver && !_isSliding && !_gravity.IsJumping)
+        if (!GameManager.Instance._gameOver && !_isSliding && !_gravity.IsJumping)
         {
             _isSliding = true;
             _player.GetPlayerController.center = _slideCenter;
