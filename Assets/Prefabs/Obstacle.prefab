@@ -56,4 +56,8 @@ MonoBehaviour:
     prefab: {fileID: 8443035051689647795, guid: 099f8517bfebbb14f9bbb7b859c8f673,
       type: 3}
     weight: 100
+  - name: DownUp
+    prefab: {fileID: 8443035051689647795, guid: beeebcfd65de4194c8078d962e9729ad,
+      type: 3}
+    weight: 100
   _mesh: {fileID: 0}

@@ -102,7 +102,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
             Invoke(nameof(StopSlide), _slideTime);
         }
     }
-    private void StopSlide()
+    public void StopSlide()
     {
         _player.GetPlayerController.center = _normalCenter;
         _player.GetPlayerController.height = _normalHeight;
