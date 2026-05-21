@@ -35,7 +35,7 @@ public class PlayerGravity : MonoBehaviour, IPlayer
 
     private void Jump()
     {
-        if (!GameManager.Instance._gameOver && _player.GetPlayerController.isGrounded)
+        if (GameManager.Instance.IsGameStart && _player.GetPlayerController.isGrounded)
         {
             _velocity.y = _jumpForce;
             _movement.StopSlide();

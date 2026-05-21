@@ -5,6 +5,9 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
+    public GameObject _menuPanel;
+    public GameObject _gamePanel;
+
     public TMP_Text _scoreText;
     public int _score = 0;
     public TMP_Text _distanceText;
@@ -30,10 +33,18 @@ public class UIManager : MonoBehaviour
         _score = 0;
         if (_scoreText) _scoreText.text = $"Candies: 0";
         _gameOverPanel.SetActive(false);
+        _menuPanel.SetActive(false);
+        _gamePanel.SetActive(true);
     }
 
     public void GameOver()
     {
         _gameOverPanel.SetActive(true);
+    }
+
+    public void Menu()
+    {
+        _gamePanel.SetActive(false);
+        _menuPanel.SetActive(true);
     }
 }

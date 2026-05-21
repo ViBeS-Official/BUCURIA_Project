@@ -53,12 +53,19 @@ public class EnvironmentSpawner : MonoBehaviour
     private void Start()
     {
         InitializeBiome(_startBiomeIndex);
-        GenerateStartObjects();
-        if (GameManager.Instance != null) GameManager.Instance.OnRestart += RestartSpawner;
+        if (GameManager.Instance != null) GameManager.Instance.OnStartGame += RestartSpawner;
+        if (GameManager.Instance != null) GameManager.Instance.OnMenu += DestroyAll;
+    }
+
+    private void OnDestroy()
+    {
+        if (GameManager.Instance != null) GameManager.Instance.OnStartGame -= RestartSpawner;
+        if (GameManager.Instance != null) GameManager.Instance.OnMenu -= DestroyAll;
     }
 
     private void Update()
     {
+        if (GameManager.Instance?.gameState != GameState.GameStart) return;
         SpawnObjects();
         CleanupObjects();
     }
@@ -83,7 +90,7 @@ public class EnvironmentSpawner : MonoBehaviour
         GameObject prefab = GetRandomPrefab(biome);
         if (prefab != null)
         {
-            Vector3 spawnPosition = new(0f, 0f, _lastSpawnZ);
+            Vector3 spawnPosition = new(0f, 0f, _lastSpawnZ + 10f);
             GameObject obj = Instantiate( prefab, spawnPosition, Quaternion.identity, transform);
             _spawnedObjects.Add(obj);
         }
@@ -155,10 +162,15 @@ public class EnvironmentSpawner : MonoBehaviour
         }
     }
 
-    public void RestartSpawner()
+    public void DestroyAll()
     {
         foreach (GameObject obj in _spawnedObjects) if (obj != null) Destroy(obj);
         _spawnedObjects.Clear();
+    }
+    public void RestartSpawner()
+    {
+        if (GameManager.Instance?.gameState != GameState.GameStart) return;
+        DestroyAll();
         if (!GameManager.Instance || GameManager.Instance.GetPlayer == null) _lastSpawnZ = 0f;
         else
         {

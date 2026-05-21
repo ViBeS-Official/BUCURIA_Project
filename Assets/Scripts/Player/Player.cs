@@ -30,6 +30,10 @@ public class Player : MonoBehaviour
         _transform.position = pos;
         _controller.enabled = true;
     }
+    public void SetRotation(Quaternion rot)
+    {
+        _transform.rotation = rot;
+    }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {

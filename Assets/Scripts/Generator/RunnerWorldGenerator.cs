@@ -55,17 +55,19 @@ public class RunnerWorldGenerator : MonoBehaviour
 
     private void Start()
     {
-        RestartGenerator();
-        if (GameManager.Instance != null) GameManager.Instance.OnRestart += RestartGenerator;
+        if (GameManager.Instance != null) GameManager.Instance.OnStartGame += RestartGenerator;
+        if (GameManager.Instance != null) GameManager.Instance.OnMenu += DestroyAll;
     }
 
     private void OnDestroy()
     {
-        if (GameManager.Instance != null) GameManager.Instance.OnRestart -= RestartGenerator;
+        if (GameManager.Instance != null) GameManager.Instance.OnStartGame -= RestartGenerator;
+        if (GameManager.Instance != null) GameManager.Instance.OnMenu -= DestroyAll;
     }
 
     private void Update()
     {
+        if (GameManager.Instance?.gameState != GameState.GameStart) return;
         UpdateDifficulty();
         CleanupObjects();
         GenerateAhead();
@@ -78,16 +80,20 @@ public class RunnerWorldGenerator : MonoBehaviour
         _random = new System.Random(_seedHash);
     }
 
-    private void RestartGenerator()
+    public void DestroyAll()
     {
-        if (!GameManager.Instance || GameManager.Instance.GetPlayer == null) return;
-        InitializeSeed();
         foreach (SpawnObject obj in _objects)
         {
             for (int i = 0; i < obj.spawnedObjects.Count; i++)
                 if (obj.spawnedObjects[i] != null) Destroy(obj.spawnedObjects[i]);
             obj.spawnedObjects.Clear();
         }
+    }
+    private void RestartGenerator()
+    {
+        if (GameManager.Instance?.gameState != GameState.GameStart || !GameManager.Instance?.GetPlayer) return;
+        InitializeSeed();
+        DestroyAll();
 
         _currentDistanceBetween = _startDistanceBetween;
         _currentBlockedObjectsPerWave = _startBlockedObjectsPerWave;
