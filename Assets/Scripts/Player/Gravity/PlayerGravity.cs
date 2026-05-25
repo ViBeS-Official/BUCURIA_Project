@@ -19,7 +19,7 @@ public class PlayerGravity : MonoBehaviour, IPlayer
 
     private void Update()
     {
-        if (!_player) return;
+        if (GameManager.Instance.IsPause || !_player) return;
         HandleInput();
         HandleMovement();
     }

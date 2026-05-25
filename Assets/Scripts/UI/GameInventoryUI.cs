@@ -1,13 +1,33 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class CandyInventoryUI : MonoBehaviour
+public class GameInventoryUI : MonoBehaviour
 {
+    [Header("Currencies")]
+    public TMP_Text _caramelAmountText;
+    public TMP_Text _coinAmountText;
+
+    [Header("Candies")]
     public GameObject panel;
     public Transform content;
     public GameObject cardPrefab;
 
-    private List<GameObject> spawnedCards = new List<GameObject>();
+    private List<GameObject> _spawnedCards = new();
+
+    #region Currency
+
+    public void UpdateCoins(int value)
+    {
+        if (_caramelAmountText) _caramelAmountText.text = value.ToString();
+    }
+
+    public void UpdateCaramels(int value)
+    {
+        if (_coinAmountText) _coinAmountText.text = value.ToString();
+    }
+
+    #endregion
 
     public void TogglePanel(bool active)
     {
@@ -24,13 +44,13 @@ public class CandyInventoryUI : MonoBehaviour
             GameObject card = Instantiate(cardPrefab, content);
             CandyCardUI ui = card.GetComponent<CandyCardUI>();
             ui.Setup(item);
-            spawnedCards.Add(card);
+            _spawnedCards.Add(card);
         }
     }
 
     private void Clear()
     {
-        foreach (GameObject obj in spawnedCards) Destroy(obj);
-        spawnedCards.Clear();
+        foreach (GameObject obj in _spawnedCards) Destroy(obj);
+        _spawnedCards.Clear();
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 
 public enum GameState
@@ -6,6 +7,7 @@ public enum GameState
     Menu,
     GameStart,
     GameStop,
+    Pause,
 }
 
 public class GameManager : MonoBehaviour
@@ -24,6 +26,8 @@ public class GameManager : MonoBehaviour
 
     public void GameStart()
     {
+        if (gameState == GameState.GameStart) return;
+        Pause(false);
         gameState = GameState.GameStart;
         player.GetAnimator.SetBool("IsRun", true);
         player.GetAnimator.SetTrigger("GameStart");
@@ -38,6 +42,8 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        if (gameState == GameState.GameStop) return;
+        Pause(false);
         gameState = GameState.GameStop;
         player.GetAnimator.SetTrigger("GameOver");
         UIManager.Instance?.GameOver();
@@ -45,6 +51,8 @@ public class GameManager : MonoBehaviour
 
     public void Menu()
     {
+        if (gameState == GameState.Menu) return;
+        Pause(false);
         gameState = GameState.Menu;
         player.GetAnimator.SetBool("IsRun", false);
         player.GetAnimator.SetTrigger("GameStart");
@@ -57,6 +65,22 @@ public class GameManager : MonoBehaviour
         OnMenu?.Invoke();
     }
 
+    public void Pause(bool active)
+    {
+        if (active) gameState = GameState.Pause;
+        else gameState = GameState.GameStart;
+        player.GetAnimator.speed = active ? 0f : 1f;
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#endif
+    }
+
     public Player GetPlayer => player;
     public bool IsGameStart => gameState == GameState.GameStart;
+    public bool IsPause => gameState == GameState.Pause;
 }

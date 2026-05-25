@@ -22,6 +22,7 @@ public enum CandyRarity
 public class GameInventory : MonoBehaviour
 {
     public static GameInventory Instance;
+    private GameInventoryUI _gameInventoryUI;
 
     [Header("Currencies")]
     public int coins;
@@ -32,18 +33,43 @@ public class GameInventory : MonoBehaviour
 
     private void Awake() => Instance = this;
 
+    void Start()
+    {
+        _gameInventoryUI = FindObjectOfType<GameInventoryUI>();
+        SaveSystem.Load();
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveSystem.Save();
+    }
+
     #region Currency
 
-    public void AddCoins(int value)
+    public void AddCoins(int value = 1)
     {
         coins += value;
         if (coins < 0) coins = 0;
+        if (_gameInventoryUI) _gameInventoryUI.UpdateCaramels(coins);
+    }
+    public void SetCoins(int value)
+    {
+        coins = value;
+        if (coins < 0) coins = 0;
+        if (_gameInventoryUI) _gameInventoryUI.UpdateCaramels(coins);
     }
 
-    public void AddCaramels(int value)
+    public void AddCaramels(int value = 1)
     {
         caramels += value;
         if (caramels < 0) caramels = 0;
+        if (_gameInventoryUI) _gameInventoryUI.UpdateCoins(caramels);
+    }
+    public void SetCaramels(int value)
+    {
+        caramels = value;
+        if (caramels < 0) caramels = 0;
+        if (_gameInventoryUI) _gameInventoryUI.UpdateCoins(caramels);
     }
 
     #endregion
@@ -56,6 +82,7 @@ public class GameInventory : MonoBehaviour
         if (existing != null)
         {
             existing.amount += amount;
+            if (existing.amount < 0) existing.amount = 0;
             return;
         }
         candies.Add(new CandyItem
@@ -67,6 +94,15 @@ public class GameInventory : MonoBehaviour
             amount = amount
         });
     }
+    public void AddCandy(string name, int amount = 1)
+    {
+        CandyItem existing = GetCandy(name);
+        if (existing != null)
+        {
+            existing.amount += amount;
+            if (existing.amount < 0) existing.amount = 0;
+        }
+    }
 
     public CandyItem GetCandy(string name) => candies.Find(c => c.name == name);
     public int GetCandyAmount(string name)
@@ -76,4 +112,9 @@ public class GameInventory : MonoBehaviour
     }
 
     #endregion
+
+    public void Refresh()
+    {
+        _gameInventoryUI.TogglePanel(true);
+    }
 }

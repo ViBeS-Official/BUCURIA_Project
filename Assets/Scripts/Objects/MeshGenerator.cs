@@ -6,7 +6,15 @@ public class CandyVariant
 {
     public string name;
     public GameObject prefab;
+    public CollectibleType type;
     [Range(0f, 100f)] public float weight = 1f;
+}
+public enum CollectibleType
+{
+    None,
+    Caramel,
+    Coin,
+    Candy,
 }
 
 public class MeshGenerator : MonoBehaviour
@@ -14,8 +22,10 @@ public class MeshGenerator : MonoBehaviour
     [Header("Variants")]
     public List<CandyVariant> _variants = new();
 
-    [Header("Mesh")]
+    [Header("CURRENT")]
     public GameObject _mesh;
+    public string _meshName;
+    public CollectibleType _collectibleType;
 
     public void Generate(int seed)
     {
@@ -43,5 +53,10 @@ public class MeshGenerator : MonoBehaviour
     {
         if (variant == null || variant.prefab == null) return;
         _mesh = Instantiate(variant.prefab, transform);
+        _meshName = variant.name;
+        _collectibleType = variant.type;
     }
+
+    public string GetCandyName => _meshName;
+    public CollectibleType GetCollectibleType => _collectibleType;
 }

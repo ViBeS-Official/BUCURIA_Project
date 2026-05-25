@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Collectible : MonoBehaviour
 {
+    private MeshGenerator _meshGenerator;
+
     [Header("Score")]
     public int value = 1;
 
@@ -18,7 +20,11 @@ public class Collectible : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            UIManager.Instance?.AddScore(value);
+            if (_meshGenerator)
+            {
+                UIManager.Instance?.AddScore(_meshGenerator.GetCollectibleType, value);
+                if (_meshGenerator.GetCollectibleType == CollectibleType.Candy) GameInventory.Instance.AddCandy(_meshGenerator.GetCandyName);
+            }
             Destroy(gameObject);
         }
     }
@@ -26,6 +32,7 @@ public class Collectible : MonoBehaviour
     private void Start()
     {
         _startPosition = transform.position;
+        _meshGenerator = GetComponent<MeshGenerator>();
     }
 
     private void Update()

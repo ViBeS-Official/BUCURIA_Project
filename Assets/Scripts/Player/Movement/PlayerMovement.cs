@@ -81,11 +81,15 @@ public class PlayerMovement : MonoBehaviour, IPlayer
             move.x = 0f;
             move.z = 0f;
         }
-        move += _gravity.GetVelocity();
-        _player.GetPlayerController.Move(move * Time.deltaTime);
+        if (!GameManager.Instance.IsPause)
+        {
+            move += _gravity.GetVelocity();
+            _player.GetPlayerController.Move(move * Time.deltaTime);
+        }
     }
     private void HandleVisualRotation()
     {
+        if (GameManager.Instance.IsPause) return;
         float targetYRotation = _horizontalInput * _rotationAngle;
         Quaternion targetRotation = Quaternion.Euler(0, targetYRotation, 0);
         _player.GetMeshTransform.localRotation = Quaternion.Lerp(_player.GetMeshTransform.localRotation, targetRotation, _rotationSmooth * Time.deltaTime);
@@ -98,7 +102,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
             _isSliding = true;
             _player.GetPlayerController.center = _slideCenter;
             _player.GetPlayerController.height = _slideHeight;
-            _player.GetAnimator.SetTrigger("Slide");
+            _player.GetAnimator.SetBool("IsSlide", true);
             Invoke(nameof(StopSlide), _slideTime);
         }
     }
@@ -107,6 +111,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
         _player.GetPlayerController.center = _normalCenter;
         _player.GetPlayerController.height = _normalHeight;
         _isSliding = false;
+        _player.GetAnimator.SetBool("IsSlide", false);
     }
     public bool IsSlide => _isSliding;
 }
