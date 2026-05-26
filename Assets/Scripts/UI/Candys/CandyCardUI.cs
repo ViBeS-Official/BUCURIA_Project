@@ -18,7 +18,7 @@ public class CandyCardUI : MonoBehaviour
         icon.sprite = _item.icon;
         nameText.text = _item.name;
         rarityText.text = _item.rarity.ToString();
-        coinCostText.text = "Sell: " + _item.coinValue;
+        coinCostText.text = _item.coinValue.ToString();;
         amountText.text = "x" + _item.amount;
         switch (_item.rarity)
         {
