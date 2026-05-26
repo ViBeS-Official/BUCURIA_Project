@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour, IPlayer
@@ -18,6 +19,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
     public Vector3 _slideCenter = new(0f, 0.5f, 0f);
     public float _slideHeight = 1f;
     private bool _isSliding;
+    private Coroutine _slideCoroutine;
 
     [Header("Difficulty")]
     [Tooltip("Насколько быстро увеличивается сложность")] public float _distanceDifficultyMultiplier = 0.02f;
@@ -97,23 +99,34 @@ public class PlayerMovement : MonoBehaviour, IPlayer
 
     private void StartSlide()
     {
-        if (GameManager.Instance.IsGameStart && !_isSliding)
-        {
-            _isSliding = true;
-            _gravity.Slide();
-            _player.GetPlayerController.center = _slideCenter;
-            _player.GetPlayerController.height = _slideHeight;
-            _player.GetAnimator.SetBool("IsSlide", true);
-            Invoke(nameof(StopSlide), _slideTime);
-        }
+        if (!GameManager.Instance.IsGameStart || _isSliding) return;
+        _isSliding = true;
+        _gravity.Slide();
+        _player.GetPlayerController.center = _slideCenter;
+        _player.GetPlayerController.height = _slideHeight;
+        _player.GetAnimator.SetBool("IsSlide", true);
+        PlayerStatsSystem.Instance?.AddSlide();
+        if (_slideCoroutine != null) StopCoroutine(_slideCoroutine);
+        _slideCoroutine = StartCoroutine(SlideRoutine());
+    }
+    private IEnumerator SlideRoutine()
+    {
+        yield return new WaitForSeconds(_slideTime);
+        StopSlide();
     }
     public void StopSlide()
     {
         if (!_isSliding) return;
+        if (_slideCoroutine != null)
+        {
+            StopCoroutine(_slideCoroutine);
+            _slideCoroutine = null;
+        }
         _player.GetPlayerController.center = _normalCenter;
         _player.GetPlayerController.height = _normalHeight;
-        _isSliding = false;
         _player.GetAnimator.SetBool("IsSlide", false);
+        _isSliding = false;
     }
+
     public bool IsSlide => _isSliding;
 }

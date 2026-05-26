@@ -22,13 +22,22 @@ public class Collectible : MonoBehaviour
         {
             if (_meshGenerator)
             {
-                if (_meshGenerator.GetCollectibleType == CollectibleType.Caramel) QuestSystem.Instance.AddProgress(QuestType.CollectCaramel);
-                if (_meshGenerator.GetCollectibleType == CollectibleType.Coin) QuestSystem.Instance.AddProgress(QuestType.CollectCoins);
+                if (_meshGenerator.GetCollectibleType == CollectibleType.Caramel)
+                {
+                    QuestSystem.Instance.AddProgress(QuestType.CollectCaramel);
+                    PlayerStatsSystem.Instance.AddCaramel();
+                }
+                if (_meshGenerator.GetCollectibleType == CollectibleType.Coin)
+                {
+                    QuestSystem.Instance.AddProgress(QuestType.CollectCoins);
+                    PlayerStatsSystem.Instance.AddCoins();
+                }
                 UIManager.Instance?.AddScore(_meshGenerator.GetCollectibleType, value);
                 if (_meshGenerator.GetCollectibleType == CollectibleType.Candy)
                 {
                     GameInventory.Instance.AddCandy(_meshGenerator.GetCandyName);
                     QuestSystem.Instance.AddProgress(QuestType.CollectCandy, 1, _meshGenerator.GetCandyName);
+                    PlayerStatsSystem.Instance.AddCandy();
                 }
             }
             Destroy(gameObject);

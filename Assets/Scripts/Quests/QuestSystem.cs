@@ -205,6 +205,7 @@ public class QuestSystem : MonoBehaviour
     {
         quest.completed = true;
         GameInventory.Instance.AddCoins(quest.data.rewardCoins);
+        PlayerStatsSystem.Instance.AddQuestComplete();
         ReplaceQuest(quest);
         RefreshAllUI();
         Save();

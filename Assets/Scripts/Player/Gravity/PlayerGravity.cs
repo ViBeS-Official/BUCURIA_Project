@@ -44,6 +44,7 @@ public class PlayerGravity : MonoBehaviour, IPlayer
             _velocity.y = _jumpForce;
             _movement.StopSlide();
             _player.GetAnimator.SetTrigger("Jump");
+            PlayerStatsSystem.Instance?.AddJump();
         }
     }
     public void Slide()

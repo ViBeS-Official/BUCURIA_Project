@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public GameState gameState;
     public event Action OnMenu;
     public event Action OnStartGame;
+    public event Action OnGameOver;
 
     private void Awake() => Instance = this;
 
@@ -47,6 +48,8 @@ public class GameManager : MonoBehaviour
         gameState = GameState.GameStop;
         player.GetAnimator.SetTrigger("GameOver");
         UIManager.Instance?.GameOver();
+        PlayerStatsSystem.Instance.AddDeath();
+        OnGameOver?.Invoke();
     }
 
     public void Menu()
