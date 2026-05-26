@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public interface IPlayer
@@ -13,6 +14,10 @@ public class Player : MonoBehaviour
     private Animator _meshAnimator;
     private Transform _meshTransform;
     private IPlayer[] _playerScripts;
+
+    private Quaternion _targetRotation;
+    public float rotationSmooth = 5f;
+    public float normalY = 0.3f;
 
     private void Awake()
     {
@@ -32,12 +37,21 @@ public class Player : MonoBehaviour
     }
     public void SetRotation(Quaternion rot)
     {
-        _transform.rotation = rot;
+        StartCoroutine(Rotate(rot));
+    }
+    private IEnumerator Rotate(Quaternion target)
+    {
+        while (Quaternion.Angle(_transform.rotation, target) > 0.1f)
+        {
+            _transform.rotation = Quaternion.Slerp(_transform.rotation, target, Time.deltaTime * rotationSmooth);
+            yield return null;
+        }
+        _transform.rotation = target;
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (hit.collider.CompareTag("Obstacle")) GameManager.Instance?.GameOver();
+        if (hit.collider.CompareTag("Obstacle") && hit.normal.y < normalY) GameManager.Instance?.GameOver();
     }
 
     public Transform GetPlayerTransform => _transform;

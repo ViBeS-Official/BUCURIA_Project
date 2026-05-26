@@ -9,6 +9,10 @@ public class PlayerGravity : MonoBehaviour, IPlayer
     public float _gravity = -10f;
     public float _jumpForce = 8f;
 
+    [Header("Slide")]
+    public bool _canSetSlideVelocity = true;
+    public float _slideForce = -10f;
+
     private Vector3 _velocity;
 
     public void Initialize(Player player)
@@ -41,6 +45,10 @@ public class PlayerGravity : MonoBehaviour, IPlayer
             _movement.StopSlide();
             _player.GetAnimator.SetTrigger("Jump");
         }
+    }
+    public void Slide()
+    {
+        if (_canSetSlideVelocity) _velocity.y = _slideForce;
     }
 
     public Vector3 GetVelocity() => _velocity;

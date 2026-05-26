@@ -97,9 +97,10 @@ public class PlayerMovement : MonoBehaviour, IPlayer
 
     private void StartSlide()
     {
-        if (GameManager.Instance.IsGameStart && !_isSliding && !_gravity.IsJumping)
+        if (GameManager.Instance.IsGameStart && !_isSliding)
         {
             _isSliding = true;
+            _gravity.Slide();
             _player.GetPlayerController.center = _slideCenter;
             _player.GetPlayerController.height = _slideHeight;
             _player.GetAnimator.SetBool("IsSlide", true);
@@ -108,6 +109,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
     }
     public void StopSlide()
     {
+        if (!_isSliding) return;
         _player.GetPlayerController.center = _normalCenter;
         _player.GetPlayerController.height = _normalHeight;
         _isSliding = false;

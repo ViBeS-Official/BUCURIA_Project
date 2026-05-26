@@ -57,12 +57,16 @@ public class GameManager : MonoBehaviour
         player.GetAnimator.SetBool("IsRun", false);
         player.GetAnimator.SetTrigger("GameStart");
         UIManager.Instance?.Menu();
+        SetPlayerTransformOnSpawnTransform();
+        OnMenu?.Invoke();
+    }
+    public void SetPlayerTransformOnSpawnTransform()
+    {
         if (player)
         {
             player.SetPosition(_spawnPosition);
             player.SetRotation(Quaternion.Euler(_spawnRotation));
         }
-        OnMenu?.Invoke();
     }
 
     public void Pause(bool active)
@@ -81,6 +85,8 @@ public class GameManager : MonoBehaviour
     }
 
     public Player GetPlayer => player;
+    public float GetSpawnRotationY => _spawnRotation.y;
     public bool IsGameStart => gameState == GameState.GameStart;
     public bool IsPause => gameState == GameState.Pause;
+    public bool IsMenu => gameState == GameState.Menu;
 }

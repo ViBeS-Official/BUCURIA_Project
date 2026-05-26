@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 7650762832184477608}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 12}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 2.5, y: 4, z: 2.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -47,9 +47,13 @@ MonoBehaviour:
   _variants:
   - name: Up
     prefab: {fileID: 730904585563654114, guid: 20225bca82a587740b3c53f7d8f477d3, type: 3}
+    type: 0
     weight: 100
   - name: Down
     prefab: {fileID: 8443035051689647795, guid: 099f8517bfebbb14f9bbb7b859c8f673,
       type: 3}
+    type: 0
     weight: 100
   _mesh: {fileID: 0}
+  _meshName: 
+  _collectibleType: 0
