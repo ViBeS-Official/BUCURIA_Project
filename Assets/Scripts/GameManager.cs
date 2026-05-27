@@ -39,6 +39,10 @@ public class GameManager : MonoBehaviour
             player.SetRotation(Quaternion.identity);
         }
         OnStartGame?.Invoke();
+        AudioManager.Instance?.PlayAnySoundtrack();
+        AudioManager.Instance?.Stop("Menu");
+        AudioManager.Instance?.Play("GameStart");
+        AudioManager.Instance?.Stop("Slide");
     }
 
     public void GameOver()
@@ -50,6 +54,9 @@ public class GameManager : MonoBehaviour
         UIManager.Instance?.GameOver();
         PlayerStatsSystem.Instance.AddDeath();
         OnGameOver?.Invoke();
+        AudioManager.Instance?.StopAllSoundtracks();
+        AudioManager.Instance?.Play("Hit");
+        AudioManager.Instance?.Play("GameOver");
     }
 
     public void Menu()
@@ -62,6 +69,8 @@ public class GameManager : MonoBehaviour
         UIManager.Instance?.Menu();
         SetPlayerTransformOnSpawnTransform();
         OnMenu?.Invoke();
+        AudioManager.Instance?.StopAllSoundtracks();
+        AudioManager.Instance?.Play("Menu");
     }
     public void SetPlayerTransformOnSpawnTransform()
     {

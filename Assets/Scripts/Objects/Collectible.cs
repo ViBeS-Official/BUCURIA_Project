@@ -26,11 +26,13 @@ public class Collectible : MonoBehaviour
                 {
                     QuestSystem.Instance.AddProgress(QuestType.CollectCaramel);
                     PlayerStatsSystem.Instance.AddCaramel();
+                    AudioManager.Instance?.Play("CollectCaramel");
                 }
                 if (_meshGenerator.GetCollectibleType == CollectibleType.Coin)
                 {
                     QuestSystem.Instance.AddProgress(QuestType.CollectCoins);
                     PlayerStatsSystem.Instance.AddCoins();
+                    AudioManager.Instance?.Play("CollectCoin");
                 }
                 UIManager.Instance?.AddScore(_meshGenerator.GetCollectibleType, value);
                 if (_meshGenerator.GetCollectibleType == CollectibleType.Candy)
@@ -38,6 +40,7 @@ public class Collectible : MonoBehaviour
                     GameInventory.Instance.AddCandy(_meshGenerator.GetCandyName);
                     QuestSystem.Instance.AddProgress(QuestType.CollectCandy, 1, _meshGenerator.GetCandyName);
                     PlayerStatsSystem.Instance.AddCandy();
+                    AudioManager.Instance?.Play("CollectCandy");
                 }
             }
             Destroy(gameObject);

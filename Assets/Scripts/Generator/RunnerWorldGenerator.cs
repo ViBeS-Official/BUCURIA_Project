@@ -13,6 +13,12 @@ public class RunnerWorldGenerator : MonoBehaviour
         public GameObject prefab;
         public bool isPassable;
         [Tooltip("Частая генерация внутри ряда")] public bool isFrequent;
+        public string biomeForSpawn = "ALL";
+
+        [Header("Raycast Placement")]
+        public bool dontSpawnIfHasDetection = false;
+        public bool spawnOnPointDetected = false;
+        public float raycastHeight = 10f;
 
         [Header("Settings")]
         [Range(0f, 1f)] public float spawnChance = 1f;
@@ -20,6 +26,8 @@ public class RunnerWorldGenerator : MonoBehaviour
         public float spawnY = 1f;
         [HideInInspector] public readonly List<GameObject> spawnedObjects = new();
     }
+
+    private EnvironmentSpawner _environmentSpawner;
 
     [Header("Objects")]
     public SpawnObject[] _objects;
@@ -55,6 +63,7 @@ public class RunnerWorldGenerator : MonoBehaviour
 
     private void Start()
     {
+        _environmentSpawner = GetComponent<EnvironmentSpawner>();
         if (GameManager.Instance != null) GameManager.Instance.OnStartGame += RestartGenerator;
         if (GameManager.Instance != null) GameManager.Instance.OnMenu += DestroyAll;
     }
@@ -174,8 +183,18 @@ public class RunnerWorldGenerator : MonoBehaviour
     }
     private void Spawn(SpawnObject spawnObject, int lane, float z)
     {
-        Vector3 spawnPosition = new(_lanesX[lane], spawnObject.spawnY, z);
-        GameObject spawned = Instantiate(spawnObject.prefab, spawnPosition, Quaternion.identity, transform);
+        if (!CanSpawnInBiome(spawnObject)) return;
+        Vector3 spawnPosition = new(_lanesX[lane], 0f, z);
+        if (spawnObject.dontSpawnIfHasDetection)
+        {
+            if (TryGetGroundPoint(spawnObject, spawnPosition, out RaycastHit hit) && !hit.transform.CompareTag("Untagged")) return;
+        }
+        if (spawnObject.spawnOnPointDetected)
+        {
+            if (TryGetGroundPoint(spawnObject, spawnPosition, out RaycastHit hit)) spawnPosition = hit.point;
+            else return;
+        }
+        GameObject spawned = Instantiate(spawnObject.prefab, spawnPosition + Vector3.up * spawnObject.spawnY, Quaternion.identity, transform);
         spawned.GetComponent<MeshGenerator>().Generate(_random.Next());
         spawnObject.spawnedObjects.Add(spawned);
     }
@@ -208,5 +227,24 @@ public class RunnerWorldGenerator : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool CanSpawnInBiome(SpawnObject obj)
+    {
+        if (obj.biomeForSpawn == "ALL") return true;
+        string currentBiome = _environmentSpawner.GetCurrentBiomeName();
+        return obj.biomeForSpawn == currentBiome;
+    }
+
+    private bool TryGetGroundPoint(SpawnObject spawnObject, Vector3 basePos, out RaycastHit raycastHit)
+    {
+        Vector3 origin = basePos + Vector3.up * spawnObject.raycastHeight;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, spawnObject.raycastHeight * 2f))
+        {
+            raycastHit = hit;
+            return true;
+        }
+        raycastHit = default;
+        return false;
     }
 }

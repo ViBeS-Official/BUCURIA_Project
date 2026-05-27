@@ -92,12 +92,14 @@ public class QuestSystem : MonoBehaviour
         if (trackedQuest == null && activeQuests.Count > 0) SetTrackedQuest(activeQuests[0]);
         RefreshAllUI();
         RefreshTrackingVisuals();
-        GameManager.Instance.OnStartGame += HandleRestart;
+        if (GameManager.Instance) GameManager.Instance.OnStartGame += GameStart;
+        if (GameManager.Instance) GameManager.Instance.OnGameOver += GameOver;
     }
 
     private void OnDestroy()
     {
-        if (GameManager.Instance) GameManager.Instance.OnStartGame -= HandleRestart;
+        if (GameManager.Instance) GameManager.Instance.OnStartGame -= GameStart;
+        if (GameManager.Instance) GameManager.Instance.OnGameOver -= GameOver;
         Save();
     }
 
@@ -209,6 +211,7 @@ public class QuestSystem : MonoBehaviour
         ReplaceQuest(quest);
         RefreshAllUI();
         Save();
+        AudioManager.Instance?.Play("CompleteQuest");
     }
 
     private void ReplaceQuest(ActiveQuest oldQuest)
@@ -261,12 +264,21 @@ public class QuestSystem : MonoBehaviour
 
     #region Restart
 
-    private void HandleRestart()
+    private void GameStart()
+    {
+        foreach (ActiveQuest quest in activeQuests)
+        {
+            quest.startDistance = GameManager.Instance.GetPlayer.GetPlayerTransform.position.z;
+        }
+        RefreshAllUI();
+        Save();
+    }
+
+    private void GameOver()
     {
         foreach (ActiveQuest quest in activeQuests)
         {
             if (quest.data.resetOnRestart) quest.progress = 0;
-            quest.startDistance = GameManager.Instance.GetPlayer.GetPlayerTransform.position.z;
         }
         RefreshAllUI();
         Save();

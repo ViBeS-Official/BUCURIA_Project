@@ -45,6 +45,7 @@ public class PlayerGravity : MonoBehaviour, IPlayer
             _movement.StopSlide();
             _player.GetAnimator.SetTrigger("Jump");
             PlayerStatsSystem.Instance?.AddJump();
+            AudioManager.Instance?.Play("Jump");
         }
     }
     public void Slide()

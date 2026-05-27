@@ -106,6 +106,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
         _player.GetPlayerController.height = _slideHeight;
         _player.GetAnimator.SetBool("IsSlide", true);
         PlayerStatsSystem.Instance?.AddSlide();
+        AudioManager.Instance?.Play("Slide");
         if (_slideCoroutine != null) StopCoroutine(_slideCoroutine);
         _slideCoroutine = StartCoroutine(SlideRoutine());
     }
@@ -125,6 +126,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
         _player.GetPlayerController.center = _normalCenter;
         _player.GetPlayerController.height = _normalHeight;
         _player.GetAnimator.SetBool("IsSlide", false);
+        AudioManager.Instance?.Stop("Slide");
         _isSliding = false;
     }
 
