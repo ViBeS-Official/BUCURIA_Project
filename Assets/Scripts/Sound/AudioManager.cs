@@ -6,7 +6,7 @@ public enum AudioType
 {
     None,
     SFX,
-    Soundtrack,
+    Music,
     Ambient,
 }
 
@@ -36,6 +36,7 @@ public class AudioManager : MonoBehaviour
     [Header("Prefabs")]
     public AudioSource musicPrefab;
     public AudioSource sfxPrefab;
+    public AudioSource ambientPrefab;
 
     [Header("Settings")]
     public float soundtrackFadeSpeed = 1.5f;
@@ -70,7 +71,18 @@ public class AudioManager : MonoBehaviour
             return;
         }
         if (IsSingleChannel(data.type)) FadeOutByType(data.type);
-        AudioSource source = Instantiate(data.type == AudioType.SFX ? sfxPrefab : musicPrefab, transform);
+        AudioSource source;
+        switch (data.type)
+        {
+            case AudioType.Music: source = Instantiate(musicPrefab, transform);
+                break;
+            case AudioType.SFX: source = Instantiate(sfxPrefab, transform);
+                break;
+            case AudioType.Ambient: source = Instantiate(ambientPrefab, transform);
+                break;
+            default: source = Instantiate(sfxPrefab, transform);
+                break;
+        }
         source.name = $"AudioSource_{id}";
         source.clip = data.clip;
         float startVolume = data.canFadeIn ? 0f : data.volume;
@@ -112,8 +124,7 @@ public class AudioManager : MonoBehaviour
         List<AudioData> soundtrackList = new();
         foreach (AudioData data in audioDatabase)
         {
-            if (data.type == AudioType.Soundtrack) soundtrackList.Add(data);
-            else Play(data.id);
+            if (data.type == AudioType.Music) soundtrackList.Add(data);
         }
         if (soundtrackList.Count > 0)
         {
@@ -123,7 +134,7 @@ public class AudioManager : MonoBehaviour
     }
     public void StopAllSoundtracks()
     {
-        foreach (AudioData data in audioDatabase) if (data.type == AudioType.Soundtrack) Stop(data.id);
+        foreach (AudioData data in audioDatabase) if (data.type == AudioType.Music) Stop(data.id);
     }
 
     #endregion
@@ -216,7 +227,7 @@ public class AudioManager : MonoBehaviour
 
     private bool IsSingleChannel(AudioType type)
     {
-        return type == AudioType.Soundtrack || type == AudioType.Ambient;
+        return type == AudioType.Music || type == AudioType.Ambient;
     }
 
     #endregion

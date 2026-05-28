@@ -11,20 +11,28 @@ public class RunnerWorldGenerator : MonoBehaviour
 
         [Header("Prefab")]
         public GameObject prefab;
+
+        [Header("Type")]
         public bool isPassable;
-        [Tooltip("Частая генерация внутри ряда")] public bool isFrequent;
-        public string biomeForSpawn = "ALL";
+        public bool isFrequent;
+
+        [Header("Biome")]
+        public string[] biomesForSpawn;
 
         [Header("Raycast Placement")]
-        public bool dontSpawnIfHasDetection = false;
-        public bool spawnOnPointDetected = false;
+        public bool dontSpawnIfHasDetection;
+        public bool spawnOnPointDetected;
         public float raycastHeight = 10f;
 
-        [Header("Settings")]
+        [Header("Spawn Settings")]
         [Range(0f, 1f)] public float spawnChance = 1f;
-        [Min(0)] public int maxPerWave = 1;
+        [Min(0.01f)] public float weight = 1f;
+        [Min(1)] public int maxPerWave = 1;
+
         public float spawnY = 1f;
-        [HideInInspector] public readonly List<GameObject> spawnedObjects = new();
+
+        [HideInInspector]
+        public readonly List<GameObject> spawnedObjects = new();
     }
 
     private EnvironmentSpawner _environmentSpawner;
@@ -33,45 +41,50 @@ public class RunnerWorldGenerator : MonoBehaviour
     public SpawnObject[] _objects;
 
     [Header("Seed")]
-    [Tooltip("Если пусто — создаётся автоматически")] public string _seed;
+    public string _seed;
+
     private System.Random _random;
-    private int _seedHash;
 
     [Header("Lanes")]
     public float[] _lanesX = { -2.5f, 0f, 2.5f };
 
     [Header("Distance")]
-    [Tooltip("Минимальный GRID шаг")] public float _minGridDistance = 2.5f;
-    [Tooltip("Начальная дистанция между рядами")] public float _startDistanceBetween = 15f;
-    [Tooltip("Минимальная дистанция между рядами")] public float _minDistanceBetween = 5f;
-
-    private float _lastSpawnZ;
+    public float _minGridDistance = 2.5f;
+    public float _startDistanceBetween = 15f;
+    public float _minDistanceBetween = 5f;
 
     [Header("Difficulty")]
-    [Tooltip("Насколько быстро уменьшается дистанция")] public float _distanceDifficultyMultiplier = 0.02f;
-    [Tooltip("Через сколько метров увеличивается сложность")] public float _difficultyDistanceStep = 50f;
+    public float _distanceDifficultyMultiplier = 0.02f;
+    public float _difficultyDistanceStep = 50f;
 
-    [Tooltip("Начальное количество НЕпроходимых объектов")][Range(0, 3)] public int _startBlockedObjectsPerWave = 1;
-    [Tooltip("Максимальное количество НЕпроходимых объектов")][Range(1, 3)] public int _absoluteMaxBlockedObjectsPerWave = 2;
-
-    private float _currentDistanceBetween;
-    private int _currentBlockedObjectsPerWave;
+    [Range(0, 3)] public int _startBlockedObjectsPerWave = 1;
+    [Range(1, 3)] public int _absoluteMaxBlockedObjectsPerWave = 2;
 
     [Header("Optimization")]
     public float _destroyBehindDistance = 20f;
-    [Tooltip("Сколько рядов заранее генерировать")] public int _generateAheadRows = 20;
+    public int _generateAheadRows = 20;
+
+    private float _lastSpawnZ;
+    private float _currentDistanceBetween;
+    private int _currentBlockedObjectsPerWave;
 
     private void Start()
     {
-        _environmentSpawner = GetComponent<EnvironmentSpawner>();
-        if (GameManager.Instance != null) GameManager.Instance.OnStartGame += RestartGenerator;
-        if (GameManager.Instance != null) GameManager.Instance.OnMenu += DestroyAll;
+        _environmentSpawner = FindObjectOfType<EnvironmentSpawner>();
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnStartGame += RestartGenerator;
+            GameManager.Instance.OnMenu += DestroyAll;
+        }
     }
 
     private void OnDestroy()
     {
-        if (GameManager.Instance != null) GameManager.Instance.OnStartGame -= RestartGenerator;
-        if (GameManager.Instance != null) GameManager.Instance.OnMenu -= DestroyAll;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnStartGame -= RestartGenerator;
+            GameManager.Instance.OnMenu -= DestroyAll;
+        }
     }
 
     private void Update()
@@ -85,109 +98,110 @@ public class RunnerWorldGenerator : MonoBehaviour
     private void InitializeSeed()
     {
         if (string.IsNullOrWhiteSpace(_seed)) _seed = Guid.NewGuid().ToString();
-        _seedHash = _seed.GetHashCode();
-        _random = new System.Random(_seedHash);
+        _random = new System.Random(_seed.GetHashCode());
+    }
+
+    private void RestartGenerator()
+    {
+        if (GameManager.Instance?.GetPlayer == null) return;
+        InitializeSeed();
+        DestroyAll();
+        _currentDistanceBetween = _startDistanceBetween;
+        _currentBlockedObjectsPerWave = _startBlockedObjectsPerWave;
+        _lastSpawnZ = Mathf.Floor( GameManager.Instance.GetPlayer.GetPlayerTransform.position.z);
+        for (int i = 0; i < _generateAheadRows; i++) GenerateWave();
     }
 
     public void DestroyAll()
     {
         foreach (SpawnObject obj in _objects)
         {
-            for (int i = 0; i < obj.spawnedObjects.Count; i++)
-                if (obj.spawnedObjects[i] != null) Destroy(obj.spawnedObjects[i]);
+            foreach (GameObject spawned in obj.spawnedObjects) if (spawned != null) Destroy(spawned);
             obj.spawnedObjects.Clear();
         }
-    }
-    private void RestartGenerator()
-    {
-        if (GameManager.Instance?.gameState != GameState.GameStart || !GameManager.Instance?.GetPlayer) return;
-        InitializeSeed();
-        DestroyAll();
-
-        _currentDistanceBetween = _startDistanceBetween;
-        _currentBlockedObjectsPerWave = _startBlockedObjectsPerWave;
-        _lastSpawnZ = Mathf.Floor(GameManager.Instance.GetPlayer.GetPlayerTransform.position.z);
-        for (int i = 0; i < _generateAheadRows; i++) GenerateWave();
     }
 
     private void UpdateDifficulty()
     {
-        if (!GameManager.Instance || GameManager.Instance.GetPlayer == null) return;
-        float distanceTravelled = GameManager.Instance.GetPlayer.GetPlayerTransform.position.z;
-        int difficultyLevel = Mathf.FloorToInt(distanceTravelled / _difficultyDistanceStep);
-        _currentDistanceBetween = Mathf.Max(_minDistanceBetween, _startDistanceBetween - (difficultyLevel * _distanceDifficultyMultiplier));
-        _currentBlockedObjectsPerWave = Mathf.Clamp(_startBlockedObjectsPerWave + difficultyLevel, 1, _absoluteMaxBlockedObjectsPerWave);
+        if (GameManager.Instance?.GetPlayer == null) return;
+        float distance = GameManager.Instance.GetPlayer.GetPlayerTransform.position.z;
+        int difficulty = Mathf.FloorToInt(distance / _difficultyDistanceStep);
+        _currentDistanceBetween = Mathf.Max(_minDistanceBetween, _startDistanceBetween - (difficulty * _distanceDifficultyMultiplier));
+        _currentBlockedObjectsPerWave = Mathf.Clamp(_startBlockedObjectsPerWave + difficulty, 1, _absoluteMaxBlockedObjectsPerWave);
     }
 
     private void GenerateAhead()
     {
-        if (!GameManager.Instance || GameManager.Instance.GetPlayer == null) return;
+        if (GameManager.Instance?.GetPlayer == null) return;
         while (_lastSpawnZ < GameManager.Instance.GetPlayer.GetPlayerTransform.position.z + (_generateAheadRows * _currentDistanceBetween)) GenerateWave();
     }
 
     private void GenerateWave()
     {
         _lastSpawnZ += _currentDistanceBetween;
-        GenerateBlockedObjects(_lastSpawnZ);
-        GenerateFrequentObjects(_lastSpawnZ);
-    }
-    private void GenerateBlockedObjects(float waveZ)
-    {
-        int laneCount = _lanesX.Length;
-        List<int> allLanes = new();
-        for (int i = 0; i < laneCount; i++) allLanes.Add(i);
-        HashSet<int> blockedLanes = new();
-        int maxBlockedLanes = Mathf.Min(_currentBlockedObjectsPerWave, laneCount - 1);
-        foreach (SpawnObject spawnObject in _objects)
-        {
-            if (spawnObject.prefab == null) continue;
-            if (spawnObject.isPassable) continue;
-            if (spawnObject.isFrequent) continue;
-            Shuffle(allLanes);
-            int spawnedCount = 0;
-            foreach (int lane in allLanes)
-            {
-                if (blockedLanes.Count >= maxBlockedLanes) break;
-                if (spawnedCount >= spawnObject.maxPerWave) break;
-                if (_random.NextDouble() > spawnObject.spawnChance) continue;
-                blockedLanes.Add(lane);
-                Spawn(spawnObject, lane, waveZ);
-                spawnedCount++;
-            }
-        }
-    }
-    private void GenerateFrequentObjects(float waveZ)
-    {
+        GenerateObjects(_lastSpawnZ, false);
         int subdivisions = Mathf.Max(1, Mathf.RoundToInt(_currentDistanceBetween / _minGridDistance));
         float step = _currentDistanceBetween / subdivisions;
-        for (int s = 0; s < subdivisions; s++)
+        for (int i = 0; i < subdivisions; i++)
         {
-            float subZ = waveZ - _currentDistanceBetween + (step * (s + 1));
-            foreach (SpawnObject spawnObject in _objects)
-            {
-                if (spawnObject.prefab == null) continue;
-                if (!spawnObject.isFrequent) continue;
-                List<int> lanes = new();
-                for (int i = 0; i < _lanesX.Length; i++) lanes.Add(i);
-                Shuffle(lanes);
-                int spawnedCount = 0;
-                foreach (int lane in lanes)
-                {
-                    if (spawnedCount >= spawnObject.maxPerWave) break;
-                    if (_random.NextDouble() > spawnObject.spawnChance) continue;
-                    Spawn(spawnObject, lane, subZ);
-                    spawnedCount++;
-                }
-            }
+            float subZ = _lastSpawnZ - _currentDistanceBetween + (step * (i + 1));
+            GenerateObjects(subZ, true);
         }
     }
+
+    private void GenerateObjects(float z, bool frequent)
+    {
+        List<int> lanes = new();
+        for (int i = 0; i < _lanesX.Length; i++) lanes.Add(i);
+        Shuffle(lanes);
+        int maxObjects = frequent ? _lanesX.Length : Mathf.Min(_currentBlockedObjectsPerWave, _lanesX.Length - 1);
+        int spawned = 0;
+        foreach (int lane in lanes)
+        {
+            if (spawned >= maxObjects) break;
+            SpawnObject selected = GetWeightedObject(z, frequent);
+            if (selected == null) continue;
+            Spawn(selected, lane, z);
+            spawned++;
+        }
+    }
+
+    private SpawnObject GetWeightedObject(float z, bool frequent)
+    {
+        List<SpawnObject> valid = new();
+        string biome = _environmentSpawner.GetBiomeAtZ(z);
+        foreach (SpawnObject obj in _objects)
+        {
+            if (obj.prefab == null) continue;
+            if (obj.isFrequent != frequent) continue;
+            if (!frequent && obj.isPassable) continue;
+            if (!ShopManager.Instance.HasItem(obj.name)) continue;
+            if (!CanSpawnInBiome(obj, biome)) continue;
+            if (_random.NextDouble() > obj.spawnChance) continue;
+            valid.Add(obj);
+        }
+        if (valid.Count == 0) return null;
+        float totalWeight = 0f;
+        foreach (SpawnObject obj in valid) totalWeight += obj.weight;
+        float random = (float)_random.NextDouble() * totalWeight;
+        float current = 0f;
+        foreach (SpawnObject obj in valid)
+        {
+            current += obj.weight;
+            if (random <= current) return obj;
+        }
+        return valid[0];
+    }
+
     private void Spawn(SpawnObject spawnObject, int lane, float z)
     {
-        if (!CanSpawnInBiome(spawnObject)) return;
         Vector3 spawnPosition = new(_lanesX[lane], 0f, z);
         if (spawnObject.dontSpawnIfHasDetection)
         {
-            if (TryGetGroundPoint(spawnObject, spawnPosition, out RaycastHit hit) && !hit.transform.CompareTag("Untagged")) return;
+            if (TryGetGroundPoint(spawnObject, spawnPosition, out RaycastHit hit))
+            {
+                if (!hit.transform.CompareTag("Untagged")) return;
+            }
         }
         if (spawnObject.spawnOnPointDetected)
         {
@@ -195,21 +209,33 @@ public class RunnerWorldGenerator : MonoBehaviour
             else return;
         }
         GameObject spawned = Instantiate(spawnObject.prefab, spawnPosition + Vector3.up * spawnObject.spawnY, Quaternion.identity, transform);
-        spawned.GetComponent<MeshGenerator>().Generate(_random.Next());
+        MeshGenerator generator = spawned.GetComponent<MeshGenerator>();
+        if (generator != null) generator.Generate(_random.Next());
         spawnObject.spawnedObjects.Add(spawned);
     }
-    private void Shuffle(List<int> list)
+
+    private bool CanSpawnInBiome(SpawnObject obj, string biome)
     {
-        for (int i = 0; i < list.Count; i++)
+        if (obj.biomesForSpawn == null || obj.biomesForSpawn.Length == 0) return true;
+        foreach (string b in obj.biomesForSpawn)
         {
-            int randomIndex = _random.Next(i, list.Count);
-            (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
+            if (string.IsNullOrEmpty(b)) continue;
+            if (b == biome) return true;
         }
+        return false;
+    }
+
+    private bool TryGetGroundPoint(SpawnObject spawnObject, Vector3 basePos, out RaycastHit hit)
+    {
+        Vector3 origin = basePos + Vector3.up * spawnObject.raycastHeight;
+        if (Physics.Raycast(origin, Vector3.down, out hit, spawnObject.raycastHeight * 2f)) return true;
+        return false;
     }
 
     private void CleanupObjects()
     {
-        if (!GameManager.Instance || GameManager.Instance.GetPlayer == null) return;
+        if (GameManager.Instance?.GetPlayer == null) return;
+        float playerZ = GameManager.Instance.GetPlayer.GetPlayerTransform.position.z;
         foreach (SpawnObject spawnObject in _objects)
         {
             for (int i = spawnObject.spawnedObjects.Count - 1; i >= 0; i--)
@@ -220,7 +246,7 @@ public class RunnerWorldGenerator : MonoBehaviour
                     spawnObject.spawnedObjects.RemoveAt(i);
                     continue;
                 }
-                if (GameManager.Instance.GetPlayer.GetPlayerTransform.position.z - obj.transform.position.z > _destroyBehindDistance)
+                if (playerZ - obj.transform.position.z > _destroyBehindDistance)
                 {
                     Destroy(obj);
                     spawnObject.spawnedObjects.RemoveAt(i);
@@ -229,22 +255,12 @@ public class RunnerWorldGenerator : MonoBehaviour
         }
     }
 
-    private bool CanSpawnInBiome(SpawnObject obj)
+    private void Shuffle(List<int> list)
     {
-        if (obj.biomeForSpawn == "ALL") return true;
-        string currentBiome = _environmentSpawner.GetCurrentBiomeName();
-        return obj.biomeForSpawn == currentBiome;
-    }
-
-    private bool TryGetGroundPoint(SpawnObject spawnObject, Vector3 basePos, out RaycastHit raycastHit)
-    {
-        Vector3 origin = basePos + Vector3.up * spawnObject.raycastHeight;
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, spawnObject.raycastHeight * 2f))
+        for (int i = 0; i < list.Count; i++)
         {
-            raycastHit = hit;
-            return true;
+            int randomIndex = _random.Next(i, list.Count);
+            (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
         }
-        raycastHit = default;
-        return false;
     }
 }

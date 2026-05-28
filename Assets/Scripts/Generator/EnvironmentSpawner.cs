@@ -17,9 +17,6 @@ public class EnvironmentSpawner : MonoBehaviour
     {
         public string name;
 
-        [Header("Unlock")]
-        public bool unlocked = true;
-
         [Header("Biome Length")]
         public int minLength = 10;
         public int maxLength = 25;
@@ -32,10 +29,23 @@ public class EnvironmentSpawner : MonoBehaviour
     }
 
     [Serializable]
-    public class BiomeSaveData
+    public class GeneratedBiome
     {
         public string biomeName;
-        public bool unlocked;
+        public float startZ;
+        public float endZ;
+
+        public GeneratedBiome(string biomeName, float startZ, float endZ)
+        {
+            this.biomeName = biomeName;
+            this.startZ = startZ;
+            this.endZ = endZ;
+        }
+
+        public bool Contains(float z)
+        {
+            return z >= startZ && z < endZ;
+        }
     }
 
     [Header("Biomes")]
@@ -45,8 +55,8 @@ public class EnvironmentSpawner : MonoBehaviour
 
     [Header("Spawner Settings")]
     public int _startSegments = 6;
-
     public float _segmentLength = 20f;
+    public float _zOffset = 10f;
 
     [Tooltip("На каком расстоянии вперёд создавать сегменты")]
     public float _spawnForwardDistance = 100f;
@@ -59,9 +69,11 @@ public class EnvironmentSpawner : MonoBehaviour
     private int _currentBiomeIndex;
     private int _biomeSegmentsLeft;
 
+    private readonly List<GeneratedBiome> _generatedBiomes = new();
+    private string _currentPlayerBiome;
+
     private void Start()
     {
-        LoadBiomes();
         InitializeBiome(_startBiomeIndex);
         if (GameManager.Instance != null) GameManager.Instance.OnStartGame += RestartSpawner;
         if (GameManager.Instance != null) GameManager.Instance.OnMenu += DestroyAll;
@@ -78,6 +90,7 @@ public class EnvironmentSpawner : MonoBehaviour
         if (GameManager.Instance?.gameState != GameState.GameStart) return;
         SpawnObjects();
         CleanupObjects();
+        CheckBiomeAudio();
     }
 
     private void GenerateStartObjects()
@@ -100,7 +113,7 @@ public class EnvironmentSpawner : MonoBehaviour
         Spawnable spawnable = GetRandomSpawnable(biome);
         if (spawnable != null)
         {
-            Vector3 spawnPosition = new(0f, 0f, _lastSpawnZ + 10f);
+            Vector3 spawnPosition = new(0f, 0f, _lastSpawnZ + _zOffset);
             Quaternion rotation = Quaternion.identity;
             if (spawnable.randomRotateY180)
             {
@@ -126,7 +139,7 @@ public class EnvironmentSpawner : MonoBehaviour
         for (int i = 0; i < _biomes.Count; i++)
         {
             if (i == previousBiome) continue;
-            if (!_biomes[i].unlocked) continue;
+            if (!ShopManager.Instance.HasItem(_biomes[i].name)) continue;
             availableBiomes.Add(i);
         }
         if (availableBiomes.Count == 0)
@@ -139,7 +152,7 @@ public class EnvironmentSpawner : MonoBehaviour
         GameObject transitionPrefab = _biomes[previousBiome].transitionPrefab;
         if (transitionPrefab != null)
         {
-            Vector3 transitionPos = new(0f, 0f, _lastSpawnZ);
+            Vector3 transitionPos = new(0f, 0f, _lastSpawnZ + _zOffset);
             GameObject transition = Instantiate(transitionPrefab, transitionPos, Quaternion.identity, transform);
             _spawnedObjects.Add(transition);
             _lastSpawnZ += _segmentLength;
@@ -152,23 +165,32 @@ public class EnvironmentSpawner : MonoBehaviour
         _currentBiomeIndex = biomeIndex;
         Biome biome = _biomes[_currentBiomeIndex];
         _biomeSegmentsLeft = UnityEngine.Random.Range(biome.minLength, biome.maxLength + 1);
-        AudioManager.Instance?.Play(biome.name);
+        float startZ = _lastSpawnZ;
+        float endZ = startZ + (_biomeSegmentsLeft * _segmentLength);
+        _generatedBiomes.Add(new GeneratedBiome(biome.name, startZ, endZ));
     }
 
-    private GameObject GetRandomPrefab(Biome biome)
+    private void CheckBiomeAudio()
     {
-        if (biome.objects.Count == 0) return null;
-        float totalWeight = 0f;
-        foreach (Spawnable obj in biome.objects) totalWeight += obj.weight;
-        float random = UnityEngine.Random.Range(0f, totalWeight);
-        float currentWeight = 0f;
-        foreach (Spawnable obj in biome.objects)
+        if (!GameManager.Instance || GameManager.Instance.GetPlayer == null) return;
+        float playerZ = GameManager.Instance.GetPlayer.GetPlayerTransform.position.z;
+        string biome = GetBiomeAtZ(playerZ);
+        if (_currentPlayerBiome != biome)
         {
-            currentWeight += obj.weight;
-            if (random <= currentWeight) return obj.prefab;
+            _currentPlayerBiome = biome;
+            AudioManager.Instance?.Play(biome);
         }
-        return biome.objects[0].prefab;
     }
+
+    public string GetBiomeAtZ(float z)
+    {
+        for (int i = 0; i < _generatedBiomes.Count; i++)
+        {
+            if (_generatedBiomes[i].Contains(z - _zOffset)) return _generatedBiomes[i].biomeName;
+        }
+        return _biomes[_startBiomeIndex].name;
+    }
+
     private Spawnable GetRandomSpawnable(Biome biome)
     {
         if (biome.objects.Count == 0) return null;
@@ -202,6 +224,13 @@ public class EnvironmentSpawner : MonoBehaviour
                 _spawnedObjects.RemoveAt(i);
             }
         }
+        for (int i = _generatedBiomes.Count - 1; i >= 0; i--)
+        {
+            if (player.position.z > _generatedBiomes[i].endZ + _destroyBehindDistance)
+            {
+                _generatedBiomes.RemoveAt(i);
+            }
+        }
     }
 
     public void DestroyAll()
@@ -213,6 +242,8 @@ public class EnvironmentSpawner : MonoBehaviour
     {
         if (GameManager.Instance?.gameState != GameState.GameStart) return;
         DestroyAll();
+        _generatedBiomes.Clear();
+        _currentPlayerBiome = string.Empty;
         if (!GameManager.Instance || GameManager.Instance.GetPlayer == null) _lastSpawnZ = 0f;
         else
         {
@@ -221,66 +252,5 @@ public class EnvironmentSpawner : MonoBehaviour
         }
         InitializeBiome(_startBiomeIndex);
         GenerateStartObjects();
-    }
-
-    public void UnlockBiome(string biomeName)
-    {
-        foreach (Biome biome in _biomes)
-        {
-            if (biome.name == biomeName)
-            {
-                biome.unlocked = true;
-                SaveBiomes();
-                return;
-            }
-        }
-    }
-
-    public bool IsBiomeUnlocked(string biomeName)
-    {
-        foreach (Biome biome in _biomes)
-        {
-            if (biome.name == biomeName)
-            {
-                return biome.unlocked;
-            }
-        }
-
-        return false;
-    }
-
-    public string GetCurrentBiomeName() => _biomes[_currentBiomeIndex].name;
-
-    public void SaveBiomes()
-    {
-        List<BiomeSaveData> save = new();
-        foreach (Biome biome in _biomes)
-        {
-            save.Add(new BiomeSaveData()
-            {
-                biomeName = biome.name,
-                unlocked = biome.unlocked
-            });
-        }
-        string json = JsonUtility.ToJson(new Serialization<BiomeSaveData>(save), true);
-        PlayerPrefs.SetString("Biomes", json);
-    }
-
-    public void LoadBiomes()
-    {
-        if (!PlayerPrefs.HasKey("Biomes")) return;
-        string json = PlayerPrefs.GetString("Biomes");
-        Serialization<BiomeSaveData> data = JsonUtility.FromJson<Serialization<BiomeSaveData>>(json);
-        foreach (BiomeSaveData save in data.items)
-        {
-            foreach (Biome biome in _biomes) if (biome.name == save.biomeName) biome.unlocked = save.unlocked;
-        }
-    }
-
-    [Serializable]
-    public class Serialization<T>
-    {
-        public List<T> items;
-        public Serialization(List<T> items) => this.items = items;
     }
 }

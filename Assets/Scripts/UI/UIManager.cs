@@ -62,7 +62,7 @@ public class UIManager : MonoBehaviour
     public void GameOver()
     {
         GameInventory.Instance.AddCaramels(_caramelScore);
-        GameInventory.Instance.AddCoins(_coinScore);
+        GameInventory.Instance.ChangeCoins(_coinScore);
         _gameOverPanel.SetActive(true);
     }
 

@@ -46,7 +46,7 @@ public class GameInventory : MonoBehaviour
 
     #region Currency
 
-    public void AddCoins(int value = 1)
+    public void ChangeCoins(int value = 1)
     {
         coins += value;
         if (coins < 0) coins = 0;
@@ -58,6 +58,7 @@ public class GameInventory : MonoBehaviour
         if (coins < 0) coins = 0;
         if (_gameInventoryUI) _gameInventoryUI.UpdateCaramels(coins);
     }
+    public int GetCoins() => coins;
 
     public void AddCaramels(int value = 1)
     {

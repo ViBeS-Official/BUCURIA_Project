@@ -43,9 +43,13 @@ public class CandyCardUI : MonoBehaviour
 
     public void Sell()
     {
-        if (_item.amount <= 0) return;
+        if (_item.amount <= 0)
+        {
+            PopupManager.Instance.Show("You don't have any candies to sell.");
+            return;
+        }
         GameInventory.Instance.AddCandy(_item.name, -1);
-        GameInventory.Instance.AddCoins(_item.coinValue);
+        GameInventory.Instance.ChangeCoins(_item.coinValue);
         GameInventory.Instance.Refresh();
     }
 }

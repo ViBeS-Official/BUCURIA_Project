@@ -14,6 +14,7 @@ public class SettingsManager : MonoBehaviour
     public Slider masterVolumeSlider;
     public Slider musicVolumeSlider;
     public Slider sfxVolumeSlider;
+    public Slider ambientVolumeSlider;
 
     [Header("Components")]
     public GameObject fpsPanel;
@@ -27,6 +28,7 @@ public class SettingsManager : MonoBehaviour
     private const string MASTER_KEY = "MasterVolume";
     private const string MUSIC_KEY = "MusicVolume";
     private const string SFX_KEY = "SFXVolume";
+    private const string AMBIENT_KEY = "AmbientVolume";
 
     private void Start()
     {
@@ -113,6 +115,12 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.SetFloat(SFX_KEY, value);
     }
 
+    public void SetAmbientVolume(float value)
+    {
+        audioMixer.SetFloat("Ambient", Mathf.Log10(Mathf.Clamp(value, 0.0001f, 1f)) * 20f);
+        PlayerPrefs.SetFloat(AMBIENT_KEY, value);
+    }
+
     #endregion
 
     #region Save / Load
@@ -124,8 +132,9 @@ public class SettingsManager : MonoBehaviour
         int fps = PlayerPrefs.GetInt(FPS_KEY, 1);
         bool vSync = PlayerPrefs.GetInt(VSYNC_KEY, 0) == 1;
         float master = PlayerPrefs.GetFloat(MASTER_KEY, 1f);
-        float music = PlayerPrefs.GetFloat(MUSIC_KEY, 1f);
+        float music = PlayerPrefs.GetFloat(MUSIC_KEY, 0.5f);
         float sfx = PlayerPrefs.GetFloat(SFX_KEY, 1f);
+        float ambient = PlayerPrefs.GetFloat(AMBIENT_KEY, 0.5f);
         qualityDropdown.value = quality;
         fpsToggle.isOn = fullenabled;
         fpsDropdown.value = fps;
@@ -133,6 +142,7 @@ public class SettingsManager : MonoBehaviour
         masterVolumeSlider.value = master;
         musicVolumeSlider.value = music;
         sfxVolumeSlider.value = sfx;
+        ambientVolumeSlider.value = ambient;
     }
 
     private void ApplyAllSettings()
@@ -144,6 +154,7 @@ public class SettingsManager : MonoBehaviour
         SetMasterVolume(masterVolumeSlider.value);
         SetMusicVolume(musicVolumeSlider.value);
         SetSFXVolume(sfxVolumeSlider.value);
+        SetMusicVolume(ambientVolumeSlider.value);
     }
 
     #endregion

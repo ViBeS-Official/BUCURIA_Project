@@ -14,11 +14,16 @@ public class PlayerMovement : MonoBehaviour, IPlayer
     public Vector3 _normalCenter = new(0f, 0.8f, 0f);
     public float _normalHeight = 1.6f;
 
+    private Quaternion _yRotation;
+    public Quaternion _surfaceRotation;
+
     [Header("Slide")]
     public float _slideTime = 1f;
     public Vector3 _slideCenter = new(0f, 0.5f, 0f);
     public float _slideHeight = 1f;
     private bool _isSliding;
+    private bool _canStopSlide;
+    private bool _buttonUp;
     private Coroutine _slideCoroutine;
 
     [Header("Difficulty")]
@@ -36,6 +41,16 @@ public class PlayerMovement : MonoBehaviour, IPlayer
 
     private float _horizontalInput;
 
+    void Start()
+    {
+        GameManager.Instance.OnGameOver += StopSlide;
+    }
+
+    void OnDestroy()
+    {
+        GameManager.Instance.OnGameOver -= StopSlide;
+    }
+
     public void Initialize(Player player)
     {
         _player = player;
@@ -52,6 +67,7 @@ public class PlayerMovement : MonoBehaviour, IPlayer
         HandleInput();
         HandleMovement();
         HandleVisualRotation();
+        if (_canStopSlide && _buttonUp) StopSlide();
     }
 
     private void HandleDifficulty()
@@ -72,7 +88,12 @@ public class PlayerMovement : MonoBehaviour, IPlayer
         }
         if (_canSmooth) _horizontalInput = Mathf.Lerp(_horizontalInput, Input.GetAxis("Horizontal"), _smoothSpeed * Time.deltaTime);
         else _horizontalInput = Input.GetAxis("Horizontal");
-        if (Input.GetKeyDown(KeyCode.S)) StartSlide();
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            StartSlide();
+            _buttonUp = false;
+        }
+        if (Input.GetKeyUp(KeyCode.S)) _buttonUp = true;
     }
     private void HandleMovement()
     {
@@ -89,12 +110,18 @@ public class PlayerMovement : MonoBehaviour, IPlayer
             _player.GetPlayerController.Move(move * Time.deltaTime);
         }
     }
+
     private void HandleVisualRotation()
     {
-        if (GameManager.Instance.IsPause) return;
+        if (!GameManager.Instance.IsGameStart) return;
         float targetYRotation = _horizontalInput * _rotationAngle;
-        Quaternion targetRotation = Quaternion.Euler(0, targetYRotation, 0);
-        _player.GetMeshTransform.localRotation = Quaternion.Lerp(_player.GetMeshTransform.localRotation, targetRotation, _rotationSmooth * Time.deltaTime);
+        _yRotation = Quaternion.Euler(0f, targetYRotation, 0f);
+        ApplyRotation();
+    }
+    private void ApplyRotation()
+    {
+        Quaternion final = _surfaceRotation * _yRotation;
+        _player.GetMeshTransform.rotation = Quaternion.Slerp(_player.GetMeshTransform.rotation, final, _rotationSmooth * Time.deltaTime);
     }
 
     private void StartSlide()
@@ -112,8 +139,10 @@ public class PlayerMovement : MonoBehaviour, IPlayer
     }
     private IEnumerator SlideRoutine()
     {
+        _canStopSlide = false;
         yield return new WaitForSeconds(_slideTime);
-        StopSlide();
+        _canStopSlide = true;
+        //StopSlide();
     }
     public void StopSlide()
     {

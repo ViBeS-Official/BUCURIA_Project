@@ -206,7 +206,7 @@ public class QuestSystem : MonoBehaviour
     private void CompleteQuest(ActiveQuest quest)
     {
         quest.completed = true;
-        GameInventory.Instance.AddCoins(quest.data.rewardCoins);
+        GameInventory.Instance.ChangeCoins(quest.data.rewardCoins);
         PlayerStatsSystem.Instance.AddQuestComplete();
         ReplaceQuest(quest);
         RefreshAllUI();
@@ -242,6 +242,7 @@ public class QuestSystem : MonoBehaviour
         RefreshTrackedUI();
         RefreshTrackingVisuals();
         Save();
+        PopupManager.Instance.Show($"Quest <<{trackedQuest.data.GetDescription()}>> is now being tracked.");
     }
 
     private void RefreshTrackedUI()
