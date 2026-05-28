@@ -1,61 +1,125 @@
+Вот обновлённый README, уже под твой текущий уровень проекта (с генерацией биомов, весами, процедурной системой, улучшенной архитектурой и полноценным runner-core):
+
+---
+
 # 🍬 Bucuria: Sweet Delivery
 
 ## 📌 Descriere
-**Bucuria: Sweet Delivery** este un prototip de joc casual dezvoltat în Unity, care combină un endless runner cu mini-jocuri interactive.
 
-Jucătorul preia rolul unui curier responsabil de colectarea și asamblarea comenzilor de produse de cofetărie într-un timp limitat. În timpul jocului, utilizatorul parcurge niveluri dinamice, colectând dulciuri și evitând obstacole. După finalizarea fazei de alergare, jucătorul intră într-un mini-joc de sortare, unde obiectele colectate trebuie organizate și plasate în cutii cadou conform cerințelor comenzii.
+**Bucuria: Sweet Delivery** este un joc de tip **endless runner procedural** dezvoltat în Unity, în care lumea se generează dinamic în timp real, combinând biome-uri diferite, obstacole variate și un sistem de progresie bazat pe deblocări.
 
-Proiectul este conceput pentru a crește implicarea utilizatorilor și pentru a prezenta produsele de cofetărie într-un mod interactiv și distractiv.
-
----
-
-## 🎮 Funcționalități Gameplay
-- 🏃 Mecanică de endless runner (mișcare, evitarea obstacolelor, colectarea obiectelor)
-- 🍬 Dulciuri colectabile utilizate ca resurse
-- 📦 Mini-joc de sortare pentru asamblarea cutiilor cadou
-- 🎯 Obiective bazate pe comenzi cu un sistem simplu de validare
-- ⭐ Evaluarea performanței la finalul fiecărei sesiuni
+Jucătorul controlează un personaj care aleargă prin medii variate (biome), unde trebuie să evite obstacole, să colecteze obiecte și să supraviețuiască cât mai mult. Lumea este generată pe bază de **grid modular**, cu tranziții fluide între biome-uri și distribuție controlată a obiectelor prin sistem de **weight-based spawning**.
 
 ---
 
-## 🧠 Concept
-Spre deosebire de jocurile runner tradiționale precum *Subway Surfers*, acest proiect introduce un **gameplay loop complet**:
-1. **Colectare** de resurse (faza runner)  
-2. **Procesare** (mini-joc de sortare)  
-3. **Livrare** produs final (cutie cadou)
+## 🎮 Gameplay
 
-Acest lucru oferă sens și structură gameplay-ului, transformând experiența dintr-un simplu joc bazat pe scor într-un sistem orientat pe obiective.
+* 🏃 Endless runner complet procedural
+* 🌍 Generare dinamică de biome-uri (Forest, City etc.)
+* 🧱 Sistem modular pe grid (segmente uniforme)
+* ⚖️ Spawn system bazat pe **weight (densitate reală a obiectelor)**
+* 🚧 Obstacole mixate între biome-uri în funcție de progres și deblocări
+* 🔓 Sistem de deblocare a conținutului prin Shop / progres
+* 🎧 Audio adaptiv în funcție de biome
+* 🔄 Tranziții între biome-uri fără întreruperi vizuale
+* 🧠 Generare deterministă (seed-based) pentru consistență
 
 ---
 
-## 🛠️ Tehnologii utilizate
-- Unity (Game Engine)
-- C#
-- (Opțional: URP / Built-in Render Pipeline)
+## 🌍 Sistem de lume (World Generation)
+
+Proiectul folosește un sistem avansat de generare procedurală:
+
+### 🔹 Biome System
+
+* Fiecare biome are:
+
+  * lungime variabilă (min / max segments)
+  * set propriu de obiecte
+  * prefab de tranziție
+* Biome-urile sunt selectate dinamic în funcție de progres și unlock-uri
+
+### 🔹 Grid-based spawning
+
+* Lumea este construită pe `segmentLength`
+* Toate pozițiile sunt aliniate pe un grid fix
+* Elimină:
+
+  * gaps între biome-uri
+  * suprapuneri
+  * jitter vizual
+
+---
+
+## ⚖️ Sistem de Spawn (Important)
+
+* `weight` controlează **densitatea și frecvența reală** a obiectelor
+* obiectele din biome-uri diferite sunt **amestecate natural**
+* obiectele globale (ex: BASE obstacles) apar în toate biome-urile
+* biome-specific objects apar doar în biome-ul lor
+
+👉 Rezultat: lumea pare organică, dar rămâne controlabilă
+
+---
+
+## 🧠 Arhitectură
+
+* Separare între:
+
+  * World Generator (biome + grid)
+  * Runner Generator (obstacles + gameplay)
+  * Environment System (audio + biome tracking)
+* Sistem fără dublări inutile de logică
+* Generare deterministă pe seed
+* Cleanup automat pentru optimizare
+
+---
+
+## 🔊 Audio System
+
+* Muzica și ambientul se schimbă în funcție de biome
+* Detectarea biome-ului este bazată pe poziția reală a playerului
+* Tranziții audio fluide (fără spam / fără restart inutil)
+
+---
+
+## 🧱 Tehnologii utilizate
+
+* Unity Engine
+* C#
+* Procedural Generation Systems
+* Custom Game Architecture
+* Physics-based detection (raycast placement)
 
 ---
 
 ## 🚀 Obiectivele proiectului
-- Crearea unui joc casual captivant și accesibil
-- Demonstrarea modului în care aplicațiile interactive pot susține promovarea unui brand
-- Construirea unui prototip scalabil care poate fi extins cu noi funcționalități
+
+* Crearea unui endless runner modern, extensibil și modular
+* Construirea unui sistem de lume procedurală realist și controlabil
+* Integrarea gameplay-ului cu progresie și unlock-uri
+* Optimizare pentru rulare continuă (infinite world streaming)
 
 ---
 
 ## 📷 Capturi de ecran
-*(Capturile de ecran)*
+
+*(Adaugă screenshots aici – biome transitions, gameplay, shop etc.)*
 
 ---
 
 ## 📦 Build
-*(Build / link de descărcare)*
+
+*(Link de download / release)*
 
 ---
 
 ## 👤 Autor
+
 Victor Bejuc
 
 ---
 
 ## 📄 Licență
-Acest proiect este creat în scopuri educaționale.
+
+Acest proiect este creat în scopuri educaționale și de portofoliu.
