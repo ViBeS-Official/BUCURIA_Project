@@ -100,7 +100,35 @@ Proiectul folosește un sistem avansat de generare procedurală:
 
 ## 📷 Capturi de ecran
 
-*(Adaugă screenshots aici – biome transitions, gameplay, shop etc.)*
+### Meniu principal
+<img width="1750" height="980" alt="image" src="https://github.com/user-attachments/assets/24d702ee-43b7-4dce-a8e2-8f4b1201234c" />
+
+### Magazin
+<img width="1750" height="980" alt="image" src="https://github.com/user-attachments/assets/21fc040e-76d0-4784-a4e9-0985926ce576" />
+
+### Inventar
+<img width="1750" height="980" alt="image" src="https://github.com/user-attachments/assets/3015a38e-ee48-46a3-88f1-e003c7fd5e66" />
+
+### Statistici
+<img width="1750" height="980" alt="image" src="https://github.com/user-attachments/assets/3d0bf21d-3a74-4b5d-b0d5-6f1ce28e647e" />
+
+### Setări
+<img width="1750" height="980" alt="image" src="https://github.com/user-attachments/assets/a94ad595-b63f-4f41-bdf6-28b13322c26d" />
+
+### Joc
+<img width="1750" height="980" alt="image" src="https://github.com/user-attachments/assets/8e50bc57-e068-49ef-a185-cfdc46ade042" />
+
+### Biom: Oraș
+<img width="1750" height="980" alt="image" src="https://github.com/user-attachments/assets/736452e0-8823-44e7-9b4b-1a214b026d14" />
+
+### Biom: Pădure
+<img width="1750" height="980" alt="image" src="https://github.com/user-attachments/assets/b712da32-2f66-42ef-9a03-8ca462091535" />
+
+### Panou Game Over
+<img width="1750" height="980" alt="image" src="https://github.com/user-attachments/assets/159daac7-8a53-41f9-a69e-ca87b588ba82" />
+
+### Pauză
+<img width="1750" height="980" alt="image" src="https://github.com/user-attachments/assets/80585fcf-c79b-4eca-a759-cf96d39fb90c" />
 
 ---
 
