@@ -148,6 +148,14 @@ Proiectul folosește un sistem avansat de generare procedurală:
 
 ---
 
+## 🖼 Prezentarea
+
+📹 Prezentarea al proiectului:
+
+[⬇ Descarcă prezentarea](docs/Bucuria_Sweet_Delivery.pptx)
+
+---
+
 ## 👤 Autor
 
 Victor Bejuc
