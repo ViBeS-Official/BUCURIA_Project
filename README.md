@@ -106,7 +106,7 @@ Proiectul folosește un sistem avansat de generare procedurală:
 
 ## 📦 Build
 
-*(Link de download / release)*
+[⬇ Download latest release](https://github.com/USERNAME/REPO/releases/latest)
 
 ---
 
