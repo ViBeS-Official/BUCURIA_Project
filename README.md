@@ -138,6 +138,16 @@ Proiectul folosește un sistem avansat de generare procedurală:
 
 ---
 
+## 📄 Raport
+
+📘 Raport complet al proiectului:
+
+[⬇ Descarcă raportul PDF](docs/Raport_Practica_Bucuria_Sweet_Delivery.pdf)
+
+[⬇ Descarcă raportul DOCX](docs/Raport_Practica_Bucuria_Sweet_Delivery.docx)
+
+---
+
 ## 👤 Autor
 
 Victor Bejuc
